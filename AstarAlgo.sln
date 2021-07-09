@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31409.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstarAlgo", "AstarAlgo\AstarAlgo.csproj", "{EBC1774A-CFB6-410C-B2FA-9E3B6F7FE068}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AstarAlgo", "AstarAlgo\AstarAlgo.csproj", "{EBC1774A-CFB6-410C-B2FA-9E3B6F7FE068}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstarUnitTest", "AstarUnitTest\AstarUnitTest.csproj", "{AE550392-CD2D-441C-A6C9-F301299C2846}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AstarUnitTest", "AstarUnitTest\AstarUnitTest.csproj", "{AE550392-CD2D-441C-A6C9-F301299C2846}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PriorityQueue", "PriorityQueue\PriorityQueue.csproj", "{A2FA6171-9F62-4E23-B63E-B14374F6B597}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{AE550392-CD2D-441C-A6C9-F301299C2846}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE550392-CD2D-441C-A6C9-F301299C2846}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE550392-CD2D-441C-A6C9-F301299C2846}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2FA6171-9F62-4E23-B63E-B14374F6B597}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2FA6171-9F62-4E23-B63E-B14374F6B597}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2FA6171-9F62-4E23-B63E-B14374F6B597}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2FA6171-9F62-4E23-B63E-B14374F6B597}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

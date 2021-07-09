@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AstarAlgo\AstarAlgo.csproj" />
+    <ProjectReference Include="..\PriorityQueue\PriorityQueue.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,13 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using AstarAlgo;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AstarUnitTest
 {
     [TestClass]
-    public class AstarUnitTests
+    public class AstarWithHeapUnitTests
     {
         private TestContext testContextInstance;
 
@@ -39,9 +42,9 @@ namespace AstarUnitTest
                     .WithEdge("A", "C", 7)
                     .WithEdge("B", "G", 8)
                     .WithEdge("C", "G", 12)
-                    .WithBasicAlgo(),
+                    .WithHeapOptimization(),
                 out var graph);
-            
+
             TestContext.WriteLine($"Time to set up test graph {timeToGenerateGraph.TotalMilliseconds}");
 
             var executionTime = Timer.CaptureExecutionTime(
@@ -85,7 +88,7 @@ namespace AstarUnitTest
                     .WithEdge("A", "C", 7)
                     .WithEdge("B", "G", 12)
                     .WithEdge("C", "G", 8)
-                    .WithBasicAlgo(),
+                    .WithHeapOptimization(),
                 out var graph);
 
             TestContext.WriteLine($"Time to set up test graph {timeToGenerateGraph.TotalMilliseconds}");
