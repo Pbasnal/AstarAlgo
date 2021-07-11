@@ -32,6 +32,11 @@ bld/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
+[Ll]ibrary/
+[Tt]emp/
+UserSettings/
+AstarPathGame/*.csproj
+AstarPathGame/*.sln
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
