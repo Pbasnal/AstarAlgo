@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Pathfinding;
 using UnityEngine;
 
@@ -35,7 +32,8 @@ namespace MainGame
                 graphBuilder, 
                 GridBottomLeft,
                 unwalkableLayers);
-            GridGraph = graphBuilder.WithoutHeap();
+            GridGraph = graphBuilder.WithHeapOptimization();
+            //GridGraph = graphBuilder.WithoutHeap();
         }
 
         public static Node[] CreateGrid(
@@ -61,7 +59,7 @@ namespace MainGame
                 for (int y = 0; y < gridSize.y; y += 1)
                 {
                     var nodePosition = GetNodePosition(GridBottomLeft, nodeRadius, x, y);
-                    var originNodeIndex = x * gridSize.x + y;
+                    var originNodeIndex = x * gridSize.y + y;
                     CreateNewNode(
                         ref gridToFill[originNodeIndex],
                         ref nodePosition,
@@ -103,7 +101,7 @@ namespace MainGame
                 GridBottomLeft,
                 nodeRadius, x, y);
             
-            var toNodeIndex = x * gridSize.x + y;            
+            var toNodeIndex = x * gridSize.y + y;            
             CreateNewNode(
                 ref grid[toNodeIndex],
                 ref neighborPosition, 
@@ -167,7 +165,7 @@ namespace MainGame
                 y = Mathf.RoundToInt(percentY);
             }
 
-            return _grid[x * gridSize.x + y];
+            return _grid[x * gridSize.y + y];
         }
 
         public void OnDrawGizmos()

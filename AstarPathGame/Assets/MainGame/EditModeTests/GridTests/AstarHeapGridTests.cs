@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace AstarGridTests
 {
-    public class AstarGridTests
+    public class AstarHeapGridTests
     {
         private readonly string UnWalkableLayerName = "UnWalkableTmp";
         // A Test behaves as an ordinary method
@@ -30,7 +30,7 @@ namespace AstarGridTests
                 gridBottomLeft,
                 unwalkableLayers);
 
-            var astarData = graphBuilder.WithoutHeap();
+            var astarData = graphBuilder.WithHeapOptimization();
 
             Assert.NotNull(astarData.Nodes);
             Assert.AreEqual(gridSize.x * gridSize.y, grid.Length);
@@ -82,7 +82,7 @@ namespace AstarGridTests
 
             var gameObject = new GameObject();
             float nodeRadius = 0.5f;
-            LayerMask unwalkableLayers = LayerMask.GetMask("UnWalkableTmp");
+            LayerMask unwalkableLayers = LayerMask.GetMask(UnWalkableLayerName);
 
             var graphBuilder = A.GraphBuilder(grid);
             var gridBottomLeft = gameObject.transform.position;
@@ -95,18 +95,13 @@ namespace AstarGridTests
                 gridBottomLeft,
                 unwalkableLayers);
 
-            var astarData = graphBuilder.WithoutHeap();
+            var astarData = graphBuilder.WithHeapOptimization();
 
             Assert.NotNull(astarData.Nodes);
             Assert.AreEqual(gridSize.x * gridSize.y, grid.Length);
 
             for (int i = 0; i < astarData.Nodes.Length; i++)
             {
-                if (!astarData.Nodes[i].isWalkable)
-                {
-                    Debug.Log($"Unwalakable node index {i}");
-                }
-
                 Assert.IsTrue(astarData.Nodes[i].isWalkable);
             }
         }

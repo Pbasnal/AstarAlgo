@@ -33,7 +33,7 @@ namespace MainGame
         // Update is called once per frame
         void Update()
         {
-            if (target == null
+            if (target == null 
                 || Vector3.Distance(target.position, _targetPrevPosition) < 1)
             {
                 return;

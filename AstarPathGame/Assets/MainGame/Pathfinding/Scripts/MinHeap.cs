@@ -4,7 +4,7 @@ namespace Pathfinding
 {
     public interface IMinHeapNode
     {
-        public int Priority { get; }
+        public double Priority { get; set; }
     }
 
     public class MinHeap<T> where T : IMinHeapNode
@@ -15,11 +15,6 @@ namespace Pathfinding
         public MinHeap(int size)
         {
             _elements = new T[size];
-        }
-
-        public MinHeap(T[] elements)
-        {
-            _elements = elements;
         }
 
         private int GetLeftChildIndex(int elementIndex) => 2 * elementIndex + 1;
