@@ -47,8 +47,10 @@ namespace TestHelpers
 
         public LocationAstar WithHeapOptimization()
         {
+            var nodes = _nodes.Values.ToArray();
+            var edges = _edges.ToArray();
             var starGraph = new AstarDataWithHeap<LocationNode, DirectedEdge>
-                (_nodes.Values.ToArray(), _edges.ToArray());
+                (ref nodes, ref edges);
 
             return new LocationAstar(starGraph);
         }

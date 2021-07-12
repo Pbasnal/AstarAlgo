@@ -22,10 +22,10 @@ namespace Pathfinding
         private Dictionary<int, List<TEdge>> _nodeEdges;
         private static readonly List<TEdge> _emptyEdgeList = new List<TEdge>();
 
-        public AstarDataWithHeap(TNode[] nodes, TEdge[] edges)
+        public AstarDataWithHeap(ref TNode[] nodes, ref TEdge[] edges)
         {
             Edges = edges;
-            Nodes = nodes.Select(n => (TNode)n).ToArray();
+            Nodes = nodes;
 
             for (int i = 0; i < Nodes.Length; i++)
             {
@@ -37,7 +37,7 @@ namespace Pathfinding
             _nodeCost = new double[nodes.Length];
             _pathCost = new double[nodes.Length];
 
-            _frontierNodes = new MinHeap<TNode>(nodes);
+            _frontierNodes = new MinHeap<TNode>(nodes.Length);
 
             _nodeEdges = new Dictionary<int, List<TEdge>>();
             foreach (var edge in Edges)
@@ -79,6 +79,7 @@ namespace Pathfinding
                 return false;
             }
 
+            newFrontierNode.Priority = cost;
             _frontierNodes.Add(newFrontierNode);
             _path[newFrontierNode.Id] = fromNode.Id;
             _nodeCost[newFrontierNode.Id] = cost;

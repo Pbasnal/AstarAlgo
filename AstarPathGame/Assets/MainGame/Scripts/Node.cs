@@ -8,7 +8,7 @@ namespace MainGame
         public bool isWalkable;
         public Vector3 worldPosition;
 
-        public int Priority { get; set; }
+        public double Priority { get; set; }
         public int Id { get; set; }
 
         public string NodeId { get; set; }

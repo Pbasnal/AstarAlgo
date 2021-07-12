@@ -51,8 +51,9 @@ namespace MainGame
 
         public IAstarData<Node, WeightedEdge> WithHeapOptimization()
         {
+            var edges = _edges.Values.ToArray();
             var starGraphData = new AstarDataWithHeap<Node, WeightedEdge>
-                (_grid, _edges.Values.ToArray());
+                (ref _grid, ref edges);
 
             return starGraphData;
         }
