@@ -10,7 +10,7 @@ namespace MainGame
         {
         }
 
-        public override double HeuristicCost(Node fromNode, Node toNode)
+        public override double HeuristicCost(ref Node fromNode, ref Node toNode)
         {
             return Vector3.Distance(toNode.worldPosition, fromNode.worldPosition) * 10;
         }

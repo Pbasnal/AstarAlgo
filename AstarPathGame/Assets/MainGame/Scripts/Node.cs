@@ -16,6 +16,9 @@ namespace MainGame
         public double NodeCost { get; set; }
         public double HeuristicCost { get; set; }
 
+        //public Node()
+        //{ }
+
         public Node(bool isWalkable, Vector3 worldPosition)
         {
             NodeId = string.Empty;
@@ -36,6 +39,9 @@ namespace MainGame
 
         public Node OriginNode { get; set; }
         public Node DestinationNode { get; set; }
+
+        //public WeightedEdge()
+        //{ }
 
         public WeightedEdge(ref Node originNode, ref Node destinationNode, double cost)
         {

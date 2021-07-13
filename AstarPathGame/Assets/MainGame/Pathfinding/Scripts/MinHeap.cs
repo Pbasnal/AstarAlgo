@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using InsightsLogger;
 
 namespace Pathfinding
 {
-    public interface IMinHeapNode
+    public interface IMinHeapNode : INode
     {
         public double Priority { get; set; }
     }
@@ -14,12 +14,15 @@ namespace Pathfinding
         public readonly T[] _elements;
         private int _size;
 
-        private Dictionary<int, int> _elementIndexes;
+
+        //private Dictionary<int, int> _elementIndexes;
+        private int[] _elementIndexes;
 
         public MinHeap(int size)
         {
             _elements = new T[size];
-            _elementIndexes = new Dictionary<int, int>();
+            _elementIndexes = new int[size];//new Dictionary<int, int>();
+            Reset();
         }
 
         private int GetLeftChildIndex(int elementIndex) => 2 * elementIndex + 1;
@@ -40,8 +43,8 @@ namespace Pathfinding
             _elements[firstIndex] = _elements[secondIndex];
             _elements[secondIndex] = temp;
 
-            _elementIndexes[_elements[firstIndex].GetHashCode()] = firstIndex;
-            _elementIndexes[_elements[secondIndex].GetHashCode()] = secondIndex;
+            _elementIndexes[_elements[firstIndex].Id] = firstIndex;
+            _elementIndexes[_elements[secondIndex].Id] = secondIndex;
         }
 
         public bool IsEmpty()
@@ -71,39 +74,44 @@ namespace Pathfinding
 
         public void Add(ref T element)
         {
+            var timer = Stopwatch.StartNew();
             if (_size == _elements.Length)
                 throw new IndexOutOfRangeException();
 
-            if (_elementIndexes.ContainsKey(element.GetHashCode()))
+            if (_elementIndexes[element.Id] == -1)
             {
-                var elementId = _elementIndexes[element.GetHashCode()];
-                _elements[elementId] = element;
-                if (element.Priority < _elements[elementId].Priority)
-                {
-                    ReCalculateUp(elementId);
-                }
-                else 
-                {
-                    ReCalculateDown(elementId);
-                }
-                // write a test case for this
+                _elements[_size] = element;
+                _elementIndexes[element.Id] = _size;
+
+                //RuntimeLogger.LogDebug("MinHeap", $"UpdateElement time {timer.Elapsed.TotalMilliseconds}", timer);
+                var heapUpTime = ExecutionTimer.Time(() => ReCalculateUp(_size));
+                //RuntimeLogger.LogDebug("MinHeap", $"heapUp time {heapUpTime.TotalMilliseconds}", heapUpTime);
+                _size++;
+                return;
+            }
+
+            var elementId = _elementIndexes[element.Id];
+            _elements[elementId] = element;
+            if (element.Priority <= _elements[elementId].Priority)
+            {
+                var heapUpTime = ExecutionTimer.Time(() => ReCalculateUp(elementId));
+                //RuntimeLogger.LogDebug("MinHeap", $"heapUp2 time {heapUpTime.TotalMilliseconds}", heapUpTime);
             }
             else
             {
-                _elements[_size] = element;
-                _elementIndexes.Add(element.GetHashCode(), _size);
-
-                ReCalculateUp(_size);
-                _size++;
+                var heapDownTime = ExecutionTimer.Time(() => ReCalculateDown(elementId));
+                //RuntimeLogger.LogDebug("MinHeap", $"heapDown time {heapDownTime.TotalMilliseconds}", heapDownTime);
             }
-
         }
 
         public void Reset()
         {
             _size = 0;
-            _elementIndexes.Clear();
-            RuntimeLogger.LogDebug("MinHeap", "ResetSize", _size);
+            for (int i = 0; i < _elementIndexes.Length; i++)
+            {
+                _elementIndexes[i] = -1;
+            }
+            //RuntimeLogger.LogDebug("MinHeap", "ResetSize", _size);
         }
 
         private void ReCalculateDown(int index)

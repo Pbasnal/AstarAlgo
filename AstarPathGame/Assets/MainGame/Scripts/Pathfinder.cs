@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using InsightsLogger;
-using Pathfinding;
 using UnityEditor;
 using UnityEngine;
 
@@ -55,13 +53,12 @@ namespace MainGame
             currentOriginNode = _grid.NodeFromWorldPoint(transform.position);
             currentDestinationNode = _grid.NodeFromWorldPoint(target.position);
 
-            RuntimeLogger.LogDebug("Pathfinding", "Running", currentOriginNode);
-            RuntimeLogger.LogDebug("Pathfinding", "Origin", currentOriginNode);
-            RuntimeLogger.LogDebug("Pathfinding", "Destination", currentDestinationNode);
-
-            //ResetDebugInformation();
-            _path = _astarPathFinder.FindPathBetweenNodes(currentOriginNode, currentDestinationNode);
-            RuntimeLogger.LogDebug("Pathfinding", "PathGenerated", currentOriginNode);            
+            var pathTime = ExecutionTimer.Time(
+                () => _astarPathFinder.FindPathBetweenNodes(currentOriginNode, currentDestinationNode),
+                out _path);
+            //RuntimeLogger.LogDebug("Pathfinding", $"PathGenerated time {pathTime.TotalMilliseconds}", currentOriginNode);
+            
+            //Debug.Break();
         }
 
         private void ResetDebugInformation()

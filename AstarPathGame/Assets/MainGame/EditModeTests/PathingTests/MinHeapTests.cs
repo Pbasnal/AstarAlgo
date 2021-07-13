@@ -7,10 +7,15 @@ using UnityEngine;
 
 namespace PathfindingTests
 {
-    public struct TestHeapNode : IMinHeapNode
+    public class TestHeapNode : IMinHeapNode
     {
         public double Priority { get; set; }
         public int Id { get; set; }
+
+        public string NodeId { get; }
+        public int PreviousNode { get; set; }
+        public double NodeCost { get; set; }
+        public double HeuristicCost { get; set; }
 
         public TestHeapNode(int id, int val)
         {

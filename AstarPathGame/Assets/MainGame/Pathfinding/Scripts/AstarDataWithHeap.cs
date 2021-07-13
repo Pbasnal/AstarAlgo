@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using InsightsLogger;
 
@@ -55,7 +56,7 @@ namespace Pathfinding
             }
         }
 
-        public void ResetForNewOriginNode(TNode node)
+        public void ResetForNewOriginNode(ref TNode node)
         {
             int id = node.Id;
             for (int i = 0; i < _path.Length; i++)
@@ -69,16 +70,16 @@ namespace Pathfinding
             }
             _nodeCost[id] = 0; // Set starting node cost as 0
 
-            RuntimeLogger.LogDebug("ResetAstarData", "RestPath", _path);
-            RuntimeLogger.LogDebug("ResetAstarData", "RestNodeCost", _nodeCost);
-            RuntimeLogger.LogDebug("ResetAstarData", "RestVisisted", _visitedNodes);
+            //RuntimeLogger.LogDebug("ResetAstarData", "RestPath", _path);
+            //RuntimeLogger.LogDebug("ResetAstarData", "RestNodeCost", _nodeCost);
+            //RuntimeLogger.LogDebug("ResetAstarData", "RestVisisted", _visitedNodes);
 
             _frontierNodes.Reset();
         }
 
         public bool AddAFrontierNode(
-            TNode newFrontierNode,
-            TNode fromNode,
+            ref TNode newFrontierNode,
+            ref TNode fromNode,
             double edgeWeight,
             double costToNode, double heuristicCost)
         {
@@ -88,13 +89,19 @@ namespace Pathfinding
                 return false;
             }
 
+            
             newFrontierNode.Priority = costToNode + heuristicCost;
             newFrontierNode.PreviousNode = fromNode.Id;
-            
+
+            var timer = Stopwatch.StartNew();
             _frontierNodes.Add(ref newFrontierNode);
+            timer.Stop(); 
+            //RuntimeLogger.LogDebug("MinHeap", $"Frontier update time {timer.Elapsed.TotalMilliseconds}", timer);
+
             _path[newFrontierNode.Id] = fromNode.Id;
             _nodeCost[newFrontierNode.Id] = costToNode;
             _pathCost[newFrontierNode.Id] = edgeWeight;
+            
             return true;
         }
 
@@ -110,7 +117,7 @@ namespace Pathfinding
             return true;
         }
 
-        public List<TEdge> GetEdgesOriginatingFromNode(TNode node)
+        public List<TEdge> GetEdgesOriginatingFromNode(ref TNode node)
         {
             if (_nodeEdges.TryGetValue(node.Id, out var edges))
             {
@@ -143,8 +150,8 @@ namespace Pathfinding
             return path;
         }
 
-        public double GetNodeCostOf(TNode node) => _nodeCost[node.Id];
+        public double GetNodeCostOf(ref TNode node) => _nodeCost[node.Id];
 
-        public void SetNodeVisited(TNode node) => _visitedNodes[node.Id] = true;
+        public void SetNodeVisited(ref TNode node) => _visitedNodes[node.Id] = true;
     }
 }
