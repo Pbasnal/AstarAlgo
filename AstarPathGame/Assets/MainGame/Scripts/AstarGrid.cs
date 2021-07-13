@@ -72,10 +72,10 @@ namespace MainGame
                     graphBuilder = AddNeighbourNode(originNodeIndex, x + 1, y, 10);
                     graphBuilder = AddNeighbourNode(originNodeIndex, x - 1, y, 10);
 
-                    graphBuilder = AddNeighbourNode(originNodeIndex, x + 1, y + 1, 10);
-                    graphBuilder = AddNeighbourNode(originNodeIndex, x + 1, y - 1, 10);
-                    graphBuilder = AddNeighbourNode(originNodeIndex, x - 1, y + 1, 10);
-                    graphBuilder = AddNeighbourNode(originNodeIndex, x - 1, y - 1, 10);
+                    graphBuilder = AddNeighbourNode(originNodeIndex, x + 1, y + 1, 14.14);
+                    graphBuilder = AddNeighbourNode(originNodeIndex, x + 1, y - 1, 14.14);
+                    graphBuilder = AddNeighbourNode(originNodeIndex, x - 1, y + 1, 14.14);
+                    graphBuilder = AddNeighbourNode(originNodeIndex, x - 1, y - 1, 14.14);
                 }
             }
 
@@ -176,10 +176,11 @@ namespace MainGame
             }
             var gridCenter = transform.position + Vector3.right * gridSize.x / 2 + Vector3.forward * gridSize.y / 2;
             Gizmos.DrawWireCube(gridCenter, new Vector3(gridSize.x, 1, gridSize.y));
-
+            
             if (_grid == null) return;
             DrawGrid();
 
+            return;
             var size = new Vector3(0.3f, 1.1f, 0.3f);
 
             if (player == null) return;

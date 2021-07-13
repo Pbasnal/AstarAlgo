@@ -4,6 +4,10 @@
     {
         public string NodeId { get; }
         public int Id { get; set; }
+
+        public int PreviousNode { get; set; }
+        public double NodeCost { get; set; }
+        public double HeuristicCost { get; set; }
     }
 
     public interface IEdge<T> 

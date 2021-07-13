@@ -1,3 +1,16 @@
 {
-	"name": "Pathfinding"
+    "name": "Pathfinding",
+    "rootNamespace": "",
+    "references": [
+        "GUID:19b7661a03a31214ca6af7792f1cc1b8"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

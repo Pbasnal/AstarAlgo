@@ -13,6 +13,10 @@ namespace TestHelpers
         public int X { get; set; }
         public int Y { get; set; }
 
+        public int PreviousNode { get; set; }
+        public double NodeCost { get; set; }
+        public double HeuristicCost { get; set; }
+
         public LocationNode()
         { }
 

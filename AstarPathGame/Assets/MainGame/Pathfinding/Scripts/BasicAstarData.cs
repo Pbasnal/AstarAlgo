@@ -10,11 +10,14 @@ namespace Pathfinding
         public TNode[] Nodes { get; }
         public TEdge[] Edges { get; }
 
+        public TNode[] FrontierNodes => _frontierNodes.ToArray();
+
         private List<TNode> _frontierNodes;
         private double[] _nodeCost;
         private int[] _path;
         private double[] _pathCost;
         private bool[] _visitedNodes;
+        private double[] _heuristicCost;
 
         private Dictionary<int, List<TEdge>> _nodeEdges;
         private static readonly List<TEdge> _emptyEdgeList = new List<TEdge>();
@@ -33,6 +36,7 @@ namespace Pathfinding
             _path = new int[nodes.Length];
             _nodeCost = new double[nodes.Length];
             _pathCost = new double[nodes.Length];
+            _heuristicCost = new double[nodes.Length];
 
             _frontierNodes = new List<TNode>();
 
@@ -75,9 +79,9 @@ namespace Pathfinding
             TNode newFrontierNode,
             TNode fromNode,
             double edgeWeight,
-            double cost)
+            double costToNode, double heuristicCost)
         {
-            if (cost > _nodeCost[newFrontierNode.Id]
+            if (costToNode > _nodeCost[newFrontierNode.Id]
                 || _visitedNodes[newFrontierNode.Id])
             {
                 return false;
@@ -85,7 +89,8 @@ namespace Pathfinding
 
             _frontierNodes.Add(newFrontierNode);
             _path[newFrontierNode.Id] = fromNode.Id;
-            _nodeCost[newFrontierNode.Id] = cost;
+            _nodeCost[newFrontierNode.Id] = costToNode;
+            _heuristicCost[newFrontierNode.Id] = heuristicCost;
 
             _pathCost[newFrontierNode.Id] = edgeWeight;
             return true;

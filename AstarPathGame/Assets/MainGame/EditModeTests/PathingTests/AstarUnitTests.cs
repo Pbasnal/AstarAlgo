@@ -41,7 +41,7 @@ namespace PathfindingTests
                     .WithEdge("C", "G", 12)
                     .WithBasicAlgo(),
                 out var graph);
-            
+
             TestContext.WriteLine($"Time to set up test graph {timeToGenerateGraph.TotalMilliseconds}");
 
             var executionTime = Timer.CaptureExecutionTime(
