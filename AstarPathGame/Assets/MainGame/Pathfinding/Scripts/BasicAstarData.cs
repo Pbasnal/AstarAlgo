@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Pathfinding
 {
-    public struct BasicAstarData<TNode, TEdge> : IAstarData<TNode, TEdge>
+    public class BasicAstarData<TNode, TEdge> : IAstarData<TNode, TEdge>
         where TNode : INode, new()
         where TEdge : IWeightedEdge<TNode>, new()
     {
@@ -59,7 +59,7 @@ namespace Pathfinding
             }
         }
 
-        public void ResetForNewOriginNode(ref TNode node) => ResetForNewOriginNode(node.Id);
+        public void ResetForNewOriginNode(TNode node) => ResetForNewOriginNode(node.Id);
 
         public void ResetForNewOriginNode(int id)
         {
@@ -76,8 +76,8 @@ namespace Pathfinding
         }
 
         public bool AddAFrontierNode(
-            ref TNode newFrontierNode,
-            ref TNode fromNode,
+            TNode newFrontierNode,
+            TNode fromNode,
             double edgeWeight,
             double costToNode, double heuristicCost)
         {
@@ -122,7 +122,7 @@ namespace Pathfinding
             return true;
         }
 
-        public List<TEdge> GetEdgesOriginatingFromNode(ref TNode node)
+        public List<TEdge> GetEdgesOriginatingFromNode(TNode node)
         {
             if (_nodeEdges.TryGetValue(node.Id, out var edges))
             {
@@ -155,8 +155,8 @@ namespace Pathfinding
             return path;
         }
 
-        public double GetNodeCostOf(ref TNode node) => _nodeCost[node.Id];
+        public double GetNodeCostOf(TNode node) => _nodeCost[node.Id];
 
-        public void SetNodeVisited(ref TNode node) => _visitedNodes[node.Id] = true;
+        public void SetNodeVisited(TNode node) => _visitedNodes[node.Id] = true;
     }
 }

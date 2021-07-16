@@ -50,7 +50,7 @@ namespace TestHelpers
             var nodes = _nodes.Values.ToArray();
             var edges = _edges.ToArray();
             var starGraph = new AstarDataWithHeap<LocationNode, DirectedEdge>
-                (ref nodes, ref edges);
+                (nodes, edges);
 
             return new LocationAstar(starGraph);
         }

@@ -53,11 +53,13 @@ namespace MainGame
             currentOriginNode = _grid.NodeFromWorldPoint(transform.position);
             currentDestinationNode = _grid.NodeFromWorldPoint(target.position);
 
+            if (!currentDestinationNode.isWalkable) return;
+
             var pathTime = ExecutionTimer.Time(
-                () => _astarPathFinder.FindPathBetweenNodes(currentOriginNode, currentDestinationNode),
-                out _path);
+            () => _astarPathFinder.FindPathBetweenNodes(currentOriginNode, currentDestinationNode),
+            out _path);
             //RuntimeLogger.LogDebug("Pathfinding", $"PathGenerated time {pathTime.TotalMilliseconds}", currentOriginNode);
-            
+
             //Debug.Break();
         }
 
@@ -121,7 +123,7 @@ namespace MainGame
 
         private void DrawNodesWhichWereProcessed()
         {
-            if (!debugPathFindingProcess 
+            if (!debugPathFindingProcess
                 || _edges == null
                 || _edges.Count == 0) return;
 

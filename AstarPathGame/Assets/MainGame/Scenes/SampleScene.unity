@@ -1057,7 +1057,7 @@ MonoBehaviour:
   logsFolderPath: 
   debugGameAtRunTime: 0
   breakPerFrame: 0
-  printDebugMessages: 1
+  printDebugMessages: 0
 --- !u!4 &2083903440
 Transform:
   m_ObjectHideFlags: 0

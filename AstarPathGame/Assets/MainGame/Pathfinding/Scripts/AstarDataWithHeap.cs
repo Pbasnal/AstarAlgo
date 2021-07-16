@@ -26,7 +26,7 @@ namespace Pathfinding
         private Dictionary<int, List<TEdge>> _nodeEdges;
         private static readonly List<TEdge> _emptyEdgeList = new List<TEdge>();
 
-        public AstarDataWithHeap(ref TNode[] nodes, ref TEdge[] edges)
+        public AstarDataWithHeap(TNode[] nodes, TEdge[] edges)
         {
             Edges = edges;
             Nodes = nodes;
@@ -56,7 +56,7 @@ namespace Pathfinding
             }
         }
 
-        public void ResetForNewOriginNode(ref TNode node)
+        public void ResetForNewOriginNode(TNode node)
         {
             int id = node.Id;
             for (int i = 0; i < _path.Length; i++)
@@ -78,8 +78,8 @@ namespace Pathfinding
         }
 
         public bool AddAFrontierNode(
-            ref TNode newFrontierNode,
-            ref TNode fromNode,
+            TNode newFrontierNode,
+            TNode fromNode,
             double edgeWeight,
             double costToNode, double heuristicCost)
         {
@@ -94,7 +94,7 @@ namespace Pathfinding
             newFrontierNode.PreviousNode = fromNode.Id;
 
             var timer = Stopwatch.StartNew();
-            _frontierNodes.Add(ref newFrontierNode);
+            _frontierNodes.Add(newFrontierNode);
             timer.Stop(); 
             //RuntimeLogger.LogDebug("MinHeap", $"Frontier update time {timer.Elapsed.TotalMilliseconds}", timer);
 
@@ -117,7 +117,7 @@ namespace Pathfinding
             return true;
         }
 
-        public List<TEdge> GetEdgesOriginatingFromNode(ref TNode node)
+        public List<TEdge> GetEdgesOriginatingFromNode(TNode node)
         {
             if (_nodeEdges.TryGetValue(node.Id, out var edges))
             {
@@ -150,8 +150,8 @@ namespace Pathfinding
             return path;
         }
 
-        public double GetNodeCostOf(ref TNode node) => _nodeCost[node.Id];
+        public double GetNodeCostOf(TNode node) => _nodeCost[node.Id];
 
-        public void SetNodeVisited(ref TNode node) => _visitedNodes[node.Id] = true;
+        public void SetNodeVisited(TNode node) => _visitedNodes[node.Id] = true;
     }
 }

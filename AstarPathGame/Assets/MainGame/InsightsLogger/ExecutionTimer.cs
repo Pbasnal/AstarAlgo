@@ -21,5 +21,19 @@ namespace InsightsLogger
             timer.Stop();
             return timer.Elapsed;
         }
+
+        public static long TimeTicks(Action actionToTime)
+        {
+            var startingTicks = DateTime.UtcNow.Ticks;
+            actionToTime();            
+            return DateTime.UtcNow.Ticks - startingTicks;
+        }
+
+        public static long TimeTicks(Action<int> actionToTime, int arg)
+        {
+            var startingTicks = DateTime.UtcNow.Ticks;
+            actionToTime(arg);
+            return DateTime.UtcNow.Ticks - startingTicks;
+        }
     }
 }

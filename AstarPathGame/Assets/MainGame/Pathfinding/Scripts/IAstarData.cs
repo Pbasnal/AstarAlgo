@@ -10,21 +10,21 @@ namespace Pathfinding
         public TEdge[] Edges { get; }
 
         public TNode[] FrontierNodes { get; }
-        public double GetNodeCostOf(ref TNode node);
-        public void SetNodeVisited(ref TNode node);
+        public double GetNodeCostOf(TNode node);
+        public void SetNodeVisited(TNode node);
 
-        public void ResetForNewOriginNode(ref TNode node);
+        public void ResetForNewOriginNode(TNode node);
         
         public List<TEdge> GetPathTo(int destinationId);
 
         public bool AddAFrontierNode(
-            ref TNode newFrontierNode,
-            ref TNode fromNode,
+            TNode newFrontierNode,
+            TNode fromNode,
             double edgeWeight,
             double costToNode, double heuristicCost);
 
         public bool TryGetNodeWithMinimumCost(out TNode nodeToProcess);
 
-        public List<TEdge> GetEdgesOriginatingFromNode(ref TNode node);
+        public List<TEdge> GetEdgesOriginatingFromNode(TNode node);
     }
 }

@@ -1,6 +1,4 @@
 using System;
-using System.Diagnostics;
-using InsightsLogger;
 
 namespace Pathfinding
 {
@@ -14,14 +12,12 @@ namespace Pathfinding
         public readonly T[] _elements;
         private int _size;
 
-
-        //private Dictionary<int, int> _elementIndexes;
         private int[] _elementIndexes;
 
         public MinHeap(int size)
         {
             _elements = new T[size];
-            _elementIndexes = new int[size];//new Dictionary<int, int>();
+            _elementIndexes = new int[size];
             Reset();
         }
 
@@ -72,20 +68,17 @@ namespace Pathfinding
             return result;
         }
 
-        public void Add(ref T element)
+        public void Add(T element)
         {
-            var timer = Stopwatch.StartNew();
-            if (_size == _elements.Length)
-                throw new IndexOutOfRangeException();
-
             if (_elementIndexes[element.Id] == -1)
             {
+                if (_size == _elements.Length)
+                    throw new IndexOutOfRangeException();
+
                 _elements[_size] = element;
                 _elementIndexes[element.Id] = _size;
 
-                //RuntimeLogger.LogDebug("MinHeap", $"UpdateElement time {timer.Elapsed.TotalMilliseconds}", timer);
-                var heapUpTime = ExecutionTimer.Time(() => ReCalculateUp(_size));
-                //RuntimeLogger.LogDebug("MinHeap", $"heapUp time {heapUpTime.TotalMilliseconds}", heapUpTime);
+                ReCalculateUp(_size);
                 _size++;
                 return;
             }
@@ -94,13 +87,11 @@ namespace Pathfinding
             _elements[elementId] = element;
             if (element.Priority <= _elements[elementId].Priority)
             {
-                var heapUpTime = ExecutionTimer.Time(() => ReCalculateUp(elementId));
-                //RuntimeLogger.LogDebug("MinHeap", $"heapUp2 time {heapUpTime.TotalMilliseconds}", heapUpTime);
+                ReCalculateUp(elementId);
             }
             else
             {
-                var heapDownTime = ExecutionTimer.Time(() => ReCalculateDown(elementId));
-                //RuntimeLogger.LogDebug("MinHeap", $"heapDown time {heapDownTime.TotalMilliseconds}", heapDownTime);
+                ReCalculateDown(elementId);
             }
         }
 
@@ -116,7 +107,34 @@ namespace Pathfinding
 
         private void ReCalculateDown(int index)
         {
-            //int index = 0;
+            var leftChildIndex = GetLeftChildIndex(index);
+            var rightChildIndex = GetRightChildIndex(index);
+
+            while (leftChildIndex < _size)
+            {
+                var smallerIndex = leftChildIndex;
+
+                if (rightChildIndex < _size
+                    && _elements[rightChildIndex].Priority < _elements[leftChildIndex].Priority)
+                {
+                    smallerIndex = rightChildIndex;
+                }
+
+                if (_elements[smallerIndex].Priority >= _elements[index].Priority)
+                {
+                    break;
+                }
+
+                Swap(smallerIndex, index);
+                index = smallerIndex;
+
+                leftChildIndex = GetLeftChildIndex(index);
+                rightChildIndex = GetRightChildIndex(index);
+            }
+        }
+
+        private void ReCalculateDown_(int index)
+        {
             while (HasLeftChild(index))
             {
                 var smallerIndex = GetLeftChildIndex(index);

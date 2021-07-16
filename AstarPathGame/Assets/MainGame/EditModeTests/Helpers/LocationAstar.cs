@@ -10,7 +10,7 @@ namespace TestHelpers
         {
         }
 
-        public override double HeuristicCost(ref LocationNode fromNode, ref LocationNode toNode)
+        public override double HeuristicCost(LocationNode fromNode, LocationNode toNode)
         {
             var xDiffSquared = Math.Pow(toNode.X - fromNode.X, 2);
             var yDiffSquared = Math.Pow(toNode.Y - fromNode.Y, 2);
