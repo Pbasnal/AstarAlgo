@@ -42,8 +42,8 @@ namespace MainGame
             }
 
             _edges.Add(edgeKey, 
-                new WeightedEdge(ref _grid[fromNodeIndex], 
-                    ref _grid[toNodeIndex], 
+                new WeightedEdge(_grid[fromNodeIndex], 
+                    _grid[toNodeIndex], 
                     weight));
 
             return this;
@@ -53,7 +53,7 @@ namespace MainGame
         {
             var edges = _edges.Values.ToArray();
             var starGraphData = new AstarDataWithHeap<Node, WeightedEdge>
-                (ref _grid, ref edges);
+                (_grid, edges);
 
             return starGraphData;
         }

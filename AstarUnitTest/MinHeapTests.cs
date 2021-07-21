@@ -1,12 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PriorityQueue;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PriorityQueue.Tests
 {
-    public struct TestHeapNode : IMinHeapNode
+    public class TestHeapNode : IMinHeapNode
     {
         public int Value { get; }
 

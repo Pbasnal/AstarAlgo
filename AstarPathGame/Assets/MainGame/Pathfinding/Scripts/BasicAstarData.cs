@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Pathfinding
 {
-    public struct BasicAstarData<TNode, TEdge> : IAstarData<TNode, TEdge>
+    public class BasicAstarData<TNode, TEdge> : IAstarData<TNode, TEdge>
         where TNode : INode, new()
         where TEdge : IWeightedEdge<TNode>, new()
     {

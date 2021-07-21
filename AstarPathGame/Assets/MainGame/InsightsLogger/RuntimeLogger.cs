@@ -62,16 +62,16 @@ namespace InsightsLogger
 
         private static string CreateDebugMessage(CorrelationVector correlationVector, string eventName, string message, object payload)
         {
-            return string.Empty;// $"{correlationVector.Vector}> {eventName} | {message}" + $"\n{payload.ToJsonString()}";
+            CorrelationVector.correlationVector.Increment();
+            return $"{correlationVector.Vector}> {eventName} | {message}" + $"\n{payload.ToJsonString()}";
         }
 
         public static void LogDebug(string eventName, string message, object payload)
         {
-            return;
             var msg = CreateDebugMessage(
                 CorrelationVector.correlationVector,
                 eventName, message, payload);
-            if(Instance.printDebugMessages) Debug.Log(msg);
+            if (Instance.printDebugMessages) Debug.Log(msg);
 
             // File.WriteAllText($"{Instance.logsFolderPath}/{CorrelationVector.correlationVector}", msg);
 
@@ -80,7 +80,6 @@ namespace InsightsLogger
 
         public static void LogError(string eventName, string message, object payload)
         {
-            return;
             var msg = CreateDebugMessage(
                 CorrelationVector.correlationVector,
                 eventName, message, payload);
@@ -93,7 +92,6 @@ namespace InsightsLogger
 
         public static void LogException(Exception exception, string eventName, string message, object payload)
         {
-            return;
             LogError(eventName, message, payload);
             if (Instance.printDebugMessages) Debug.LogException(exception);
 
@@ -105,7 +103,6 @@ namespace InsightsLogger
 
         public static void LogWarning(string eventName, string message, object payload)
         {
-            return;
             var msg = CreateDebugMessage(
                 CorrelationVector.correlationVector,
                 eventName, message, payload);
@@ -122,18 +119,18 @@ namespace InsightsLogger
         }
         private void Update()
         {
-            //if (!debugGameAtRunTime) return;
+            if (!debugGameAtRunTime) return;
 
-            //while (_debugMessages.TryDequeue(out string debugMsg))
-            //{
-            //    var msg = debugMsg.Split('\n')[0];
-            //    var eventNameAndMessage = msg.Split('>')[1].Trim();
-            //    var eventName = eventNameAndMessage.Split('|')[0].Trim();
-            //    var eventMessage = eventNameAndMessage.Split('|')[1].Trim();
-            //    var payload = debugMsg.Split('\n')[1];
+            while (_debugMessages.TryDequeue(out string debugMsg))
+            {
+                var msg = debugMsg.Split('\n')[0];
+                var eventNameAndMessage = msg.Split('>')[1].Trim();
+                var eventName = eventNameAndMessage.Split('|')[0].Trim();
+                var eventMessage = eventNameAndMessage.Split('|')[1].Trim();
+                var payload = debugMsg.Split('\n')[1];
 
-            //    Instance._processDebugMessages?.Invoke(eventName, eventMessage, payload);
-            //}
+                Instance._processDebugMessages?.Invoke(eventName, eventMessage, payload);
+            }
         }
     }
 }

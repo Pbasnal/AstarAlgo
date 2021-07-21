@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using InsightsLogger;
+using System.Diagnostics;
 
 namespace Pathfinding
 {
@@ -10,6 +11,8 @@ namespace Pathfinding
     {
         public List<TEdge> computedPath;
         private IAstarData<TNode, TEdge> _astarData;
+
+        private Stopwatch _timer = new Stopwatch();
 
         public AstarPath(IAstarData<TNode, TEdge> astarData)
         {
@@ -26,6 +29,7 @@ namespace Pathfinding
 
         public List<TEdge> FindPathBetweenNodes(TNode originNode, TNode destinationNode)
         {
+            var timer = Stopwatch.StartNew();
             _astarData.ResetForNewOriginNode(originNode);
 
             var heuristicCost = HeuristicCost(_astarData.Nodes[originNode.Id], destinationNode);
@@ -34,41 +38,60 @@ namespace Pathfinding
             {
                 var edgesOriginatingFromNode = _astarData.GetEdgesOriginatingFromNode(originNode);
 
-                computedPath = _astarData.GetPathTo(originNode.Id);
-
                 foreach (var edge in edgesOriginatingFromNode)
                 {
-                    heuristicCost = HeuristicCost(_astarData.Nodes[edge.DestinationNode.Id], destinationNode);
-                    var nodeCost = _astarData.GetNodeCostOf(originNode) + edge.Weight;
-
-                    var nodeGotAdded = _astarData.AddAFrontierNode(
-                        _astarData.Nodes[edge.DestinationNode.Id],
-                        originNode,
-                        edge.Weight,
-                        nodeCost, heuristicCost);
-
-                    if (nodeGotAdded)
-                    {
-                        _astarData.Nodes[edge.DestinationNode.Id].HeuristicCost = heuristicCost;
-                        _astarData.Nodes[edge.DestinationNode.Id].NodeCost = nodeCost;
-                        _astarData.Nodes[edge.DestinationNode.Id].PreviousNode = originNode.Id;
-
-                        int originId = originNode.Id;
-                        int destId = _astarData.Nodes[edge.DestinationNode.Id].Id;
-                        RuntimeLogger.LogDebug("Pathfinding", "AddedFrontier", 
-                            ListWrapper<int>.Wrap(originId, destId));
-                    }
+                    var tryAddFrontier = ExecutionTimer.Time(() => TryAddFrontierNode(originNode, destinationNode, edge));
+                    //RuntimeLogger.LogDebug("Pathfinding", $"TryAddFrontierNode time {tryAddFrontier.TotalMilliseconds}", heuristicCost);
                 }
                 _astarData.SetNodeVisited(originNode);
-                
+
                 if (originNode.Id == destinationNode.Id)
                 {
                     // why to move anywhere else from here.
                     break;
                 }
+                //RuntimeLogger.LogDebug("Pathfinding", $"Loop time {timer.Elapsed.TotalMilliseconds}", timer);
+                timer.Restart();
             }
 
-            return _astarData.GetPathTo(destinationNode.Id);
+            var computePathTime = ExecutionTimer.Time(
+                    () => _astarData.GetPathTo(destinationNode.Id),
+                    out var path);
+            //RuntimeLogger.LogDebug("Pathfinding", $"ComputePath time {computePathTime.TotalMilliseconds}", path);
+
+            return path;
+        }
+
+        private double TryAddFrontierNode(TNode originNode, TNode destinationNode, TEdge edge)
+        {
+            _timer.Start();
+            double heuristicCost = HeuristicCost(_astarData.Nodes[edge.DestinationNode.Id], destinationNode);
+            var nodeCost = _astarData.GetNodeCostOf(originNode) + edge.Weight;
+            //RuntimeLogger.LogDebug("Pathfinding", $"Cost calculation time {_timer.Elapsed.TotalMilliseconds}", heuristicCost);
+            _timer.Restart();
+            
+            var nodeGotAdded = _astarData.AddAFrontierNode(
+                _astarData.Nodes[edge.DestinationNode.Id],
+                originNode,
+                edge.Weight,
+                nodeCost, heuristicCost);
+            
+            //RuntimeLogger.LogDebug("Pathfinding", $"Addfrontier time {_timer.Elapsed.TotalMilliseconds}", heuristicCost);
+            _timer.Restart();
+
+            if (nodeGotAdded)
+            {
+                _astarData.Nodes[edge.DestinationNode.Id].HeuristicCost = heuristicCost;
+                _astarData.Nodes[edge.DestinationNode.Id].NodeCost = nodeCost;
+                _astarData.Nodes[edge.DestinationNode.Id].PreviousNode = originNode.Id;
+
+                //int originId = originNode.Id;
+                //int destId = _astarData.Nodes[edge.DestinationNode.Id].Id;
+                //RuntimeLogger.LogDebug("Pathfinding", "AddedFrontier",
+                //    ListWrapper<int>.Wrap(originId, destId));
+            }
+
+            return heuristicCost;
         }
 
         public abstract double HeuristicCost(TNode fromNode, TNode toNode);

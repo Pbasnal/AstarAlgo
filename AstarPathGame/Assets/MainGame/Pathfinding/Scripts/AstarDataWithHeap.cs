@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using InsightsLogger;
 
@@ -25,7 +26,7 @@ namespace Pathfinding
         private Dictionary<int, List<TEdge>> _nodeEdges;
         private static readonly List<TEdge> _emptyEdgeList = new List<TEdge>();
 
-        public AstarDataWithHeap(ref TNode[] nodes, ref TEdge[] edges)
+        public AstarDataWithHeap(TNode[] nodes, TEdge[] edges)
         {
             Edges = edges;
             Nodes = nodes;
@@ -69,9 +70,9 @@ namespace Pathfinding
             }
             _nodeCost[id] = 0; // Set starting node cost as 0
 
-            RuntimeLogger.LogDebug("ResetAstarData", "RestPath", _path);
-            RuntimeLogger.LogDebug("ResetAstarData", "RestNodeCost", _nodeCost);
-            RuntimeLogger.LogDebug("ResetAstarData", "RestVisisted", _visitedNodes);
+            //RuntimeLogger.LogDebug("ResetAstarData", "RestPath", _path);
+            //RuntimeLogger.LogDebug("ResetAstarData", "RestNodeCost", _nodeCost);
+            //RuntimeLogger.LogDebug("ResetAstarData", "RestVisisted", _visitedNodes);
 
             _frontierNodes.Reset();
         }
@@ -88,13 +89,19 @@ namespace Pathfinding
                 return false;
             }
 
+            
             newFrontierNode.Priority = costToNode + heuristicCost;
             newFrontierNode.PreviousNode = fromNode.Id;
-            
-            _frontierNodes.Add(ref newFrontierNode);
+
+            var timer = Stopwatch.StartNew();
+            _frontierNodes.Add(newFrontierNode);
+            timer.Stop(); 
+            //RuntimeLogger.LogDebug("MinHeap", $"Frontier update time {timer.Elapsed.TotalMilliseconds}", timer);
+
             _path[newFrontierNode.Id] = fromNode.Id;
             _nodeCost[newFrontierNode.Id] = costToNode;
             _pathCost[newFrontierNode.Id] = edgeWeight;
+            
             return true;
         }
 

@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
-using InsightsLogger;
 
 namespace Pathfinding
 {
-    public interface IMinHeapNode
+    public interface IMinHeapNode : INode
     {
         public double Priority { get; set; }
     }
@@ -14,12 +12,13 @@ namespace Pathfinding
         public readonly T[] _elements;
         private int _size;
 
-        private Dictionary<int, int> _elementIndexes;
+        private int[] _elementIndexes;
 
         public MinHeap(int size)
         {
             _elements = new T[size];
-            _elementIndexes = new Dictionary<int, int>();
+            _elementIndexes = new int[size];
+            Reset();
         }
 
         private int GetLeftChildIndex(int elementIndex) => 2 * elementIndex + 1;
@@ -40,8 +39,8 @@ namespace Pathfinding
             _elements[firstIndex] = _elements[secondIndex];
             _elements[secondIndex] = temp;
 
-            _elementIndexes[_elements[firstIndex].GetHashCode()] = firstIndex;
-            _elementIndexes[_elements[secondIndex].GetHashCode()] = secondIndex;
+            _elementIndexes[_elements[firstIndex].Id] = firstIndex;
+            _elementIndexes[_elements[secondIndex].Id] = secondIndex;
         }
 
         public bool IsEmpty()
@@ -69,46 +68,73 @@ namespace Pathfinding
             return result;
         }
 
-        public void Add(ref T element)
+        public void Add(T element)
         {
-            if (_size == _elements.Length)
-                throw new IndexOutOfRangeException();
+            if (_elementIndexes[element.Id] == -1)
+            {
+                if (_size == _elements.Length)
+                    throw new IndexOutOfRangeException();
 
-            if (_elementIndexes.ContainsKey(element.GetHashCode()))
-            {
-                var elementId = _elementIndexes[element.GetHashCode()];
-                _elements[elementId] = element;
-                if (element.Priority < _elements[elementId].Priority)
-                {
-                    ReCalculateUp(elementId);
-                }
-                else 
-                {
-                    ReCalculateDown(elementId);
-                }
-                // write a test case for this
-            }
-            else
-            {
                 _elements[_size] = element;
-                _elementIndexes.Add(element.GetHashCode(), _size);
+                _elementIndexes[element.Id] = _size;
 
                 ReCalculateUp(_size);
                 _size++;
+                return;
             }
 
+            var elementId = _elementIndexes[element.Id];
+            _elements[elementId] = element;
+            if (element.Priority <= _elements[elementId].Priority)
+            {
+                ReCalculateUp(elementId);
+            }
+            else
+            {
+                ReCalculateDown(elementId);
+            }
         }
 
         public void Reset()
         {
             _size = 0;
-            _elementIndexes.Clear();
-            RuntimeLogger.LogDebug("MinHeap", "ResetSize", _size);
+            for (int i = 0; i < _elementIndexes.Length; i++)
+            {
+                _elementIndexes[i] = -1;
+            }
+            //RuntimeLogger.LogDebug("MinHeap", "ResetSize", _size);
         }
 
         private void ReCalculateDown(int index)
         {
-            //int index = 0;
+            var leftChildIndex = GetLeftChildIndex(index);
+            var rightChildIndex = GetRightChildIndex(index);
+
+            while (leftChildIndex < _size)
+            {
+                var smallerIndex = leftChildIndex;
+
+                if (rightChildIndex < _size
+                    && _elements[rightChildIndex].Priority < _elements[leftChildIndex].Priority)
+                {
+                    smallerIndex = rightChildIndex;
+                }
+
+                if (_elements[smallerIndex].Priority >= _elements[index].Priority)
+                {
+                    break;
+                }
+
+                Swap(smallerIndex, index);
+                index = smallerIndex;
+
+                leftChildIndex = GetLeftChildIndex(index);
+                rightChildIndex = GetRightChildIndex(index);
+            }
+        }
+
+        private void ReCalculateDown_(int index)
+        {
             while (HasLeftChild(index))
             {
                 var smallerIndex = GetLeftChildIndex(index);

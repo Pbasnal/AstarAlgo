@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MainGame
 {
-    public struct Node : INodeWithPriority
+    public class Node : INodeWithPriority
     {
         public bool isWalkable;
         public Vector3 worldPosition;
@@ -15,6 +15,9 @@ namespace MainGame
         public int PreviousNode { get; set; }
         public double NodeCost { get; set; }
         public double HeuristicCost { get; set; }
+
+        public Node()
+        { }
 
         public Node(bool isWalkable, Vector3 worldPosition)
         {
@@ -30,14 +33,17 @@ namespace MainGame
         }
     }
 
-    public struct WeightedEdge : IWeightedEdge<Node>
+    public class WeightedEdge : IWeightedEdge<Node>
     {
         public double Weight { get; set; }
 
         public Node OriginNode { get; set; }
         public Node DestinationNode { get; set; }
 
-        public WeightedEdge(ref Node originNode, ref Node destinationNode, double cost)
+        public WeightedEdge()
+        { }
+
+        public WeightedEdge(Node originNode, Node destinationNode, double cost)
         {
             OriginNode = originNode;
             DestinationNode = destinationNode;

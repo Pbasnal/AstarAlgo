@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Pathfinding;
@@ -12,13 +11,23 @@ namespace PathfindingTests
         public double Priority { get; set; }
         public int Id { get; set; }
 
-        public TestHeapNode(int id, int val)
+        public string NodeId { get; }
+        public int PreviousNode { get; set; }
+        public double NodeCost { get; set; }
+        public double HeuristicCost { get; set; }
+
+        public TestHeapNode(int id, double val)
         {
             Id = id;
             Priority = val;
+
+            NodeId = string.Empty;
+            PreviousNode = 0;
+            NodeCost = 0;
+            HeuristicCost = 0;
         }
 
-        public static TestHeapNode New(int id, int val)
+        public static TestHeapNode New(int id, double val)
             => new TestHeapNode(id, val);
     }
 
@@ -33,7 +42,7 @@ namespace PathfindingTests
             for (int i = 0; i < 100; i++)
             {
                 var newNode = TestHeapNode.New(i, random.Next(0, 101));
-                pQueue.Add(ref newNode);
+                pQueue.Add(newNode);
             }
 
             List<TestHeapNode> tmp = new List<TestHeapNode>();
@@ -60,12 +69,12 @@ namespace PathfindingTests
             for (int i = 0; i < 10; i++)
             {
                 node = TestHeapNode.New(i + 1, (i + 1) * 10);
-                pQueue.Add(ref node);
+                pQueue.Add(node);
             }
 
             Assert.AreEqual(1, pQueue.Peek().Id);
             node.Priority = 0;
-            pQueue.Add(ref node);
+            pQueue.Add(node);
             Assert.AreEqual(10, pQueue.Peek().Id);
         }
     }
