@@ -8,15 +8,15 @@ namespace PathfindingTests
 {
     public struct TestHeapNode : IMinHeapNode
     {
-        public double Priority { get; set; }
+        public float Priority { get; set; }
         public int Id { get; set; }
 
         public string NodeId { get; }
         public int PreviousNode { get; set; }
-        public double NodeCost { get; set; }
-        public double HeuristicCost { get; set; }
+        public float NodeCost { get; set; }
+        public float HeuristicCost { get; set; }
 
-        public TestHeapNode(int id, double val)
+        public TestHeapNode(int id, float val)
         {
             Id = id;
             Priority = val;
@@ -27,7 +27,7 @@ namespace PathfindingTests
             HeuristicCost = 0;
         }
 
-        public static TestHeapNode New(int id, double val)
+        public static TestHeapNode New(int id, float val)
             => new TestHeapNode(id, val);
     }
 

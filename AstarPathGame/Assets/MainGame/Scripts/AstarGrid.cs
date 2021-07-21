@@ -21,15 +21,15 @@ namespace MainGame
 
         private void Start()
         {
-            _grid = new Node[gridSize.x * gridSize.y];            
+            _grid = new Node[gridSize.x * gridSize.y];
             GridBottomLeft = transform.position;
 
             var graphBuilder = A.GraphBuilder(_grid);
             _grid = CreateGrid(
-                gridSize, 
-                nodeRadius, 
-                _grid, 
-                graphBuilder, 
+                gridSize,
+                nodeRadius,
+                _grid,
+                graphBuilder,
                 GridBottomLeft,
                 unwalkableLayers);
             GridGraph = graphBuilder.WithHeapOptimization();
@@ -37,14 +37,14 @@ namespace MainGame
         }
 
         public static Node[] CreateGrid(
-            Vector2Int gridSize, 
+            Vector2Int gridSize,
             float nodeRadius,
             Node[] gridToFill,
             GraphBuilder graphBuilder,
             Vector3 GridBottomLeft,
             LayerMask unwalkableLayers)
         {
-            GraphBuilder AddNeighbourNode(int originNodeIndex, int x, int y, double weight) => CreateNeighborNode(
+            GraphBuilder AddNeighbourNode(int originNodeIndex, int x, int y, float weight) => CreateNeighborNode(
                     graphBuilder,
                     GridBottomLeft,
                     gridToFill,
@@ -72,10 +72,10 @@ namespace MainGame
                     graphBuilder = AddNeighbourNode(originNodeIndex, x + 1, y, 10);
                     graphBuilder = AddNeighbourNode(originNodeIndex, x - 1, y, 10);
 
-                    graphBuilder = AddNeighbourNode(originNodeIndex, x + 1, y + 1, 14.14);
-                    graphBuilder = AddNeighbourNode(originNodeIndex, x + 1, y - 1, 14.14);
-                    graphBuilder = AddNeighbourNode(originNodeIndex, x - 1, y + 1, 14.14);
-                    graphBuilder = AddNeighbourNode(originNodeIndex, x - 1, y - 1, 14.14);
+                    graphBuilder = AddNeighbourNode(originNodeIndex, x + 1, y + 1, 14.14f);
+                    graphBuilder = AddNeighbourNode(originNodeIndex, x + 1, y - 1, 14.14f);
+                    graphBuilder = AddNeighbourNode(originNodeIndex, x - 1, y + 1, 14.14f);
+                    graphBuilder = AddNeighbourNode(originNodeIndex, x - 1, y - 1, 14.14f);
                 }
             }
 
@@ -83,13 +83,13 @@ namespace MainGame
         }
 
         private static GraphBuilder CreateNeighborNode(
-            GraphBuilder graphBuilder, 
+            GraphBuilder graphBuilder,
             Vector3 GridBottomLeft,
             Node[] grid,
             Vector2Int gridSize,
             float nodeRadius,
             int fromNodeIndex,
-            int x, int y, double weight,
+            int x, int y, float weight,
             LayerMask unwalkableLayers)
         {
             if (x >= gridSize.x || y >= gridSize.y
@@ -100,12 +100,12 @@ namespace MainGame
             var neighborPosition = GetNodePosition(
                 GridBottomLeft,
                 nodeRadius, x, y);
-            
-            var toNodeIndex = x * gridSize.y + y;            
+
+            var toNodeIndex = x * gridSize.y + y;
             CreateNewNode(
                 ref grid[toNodeIndex],
-                ref neighborPosition, 
-                nodeRadius, 
+                ref neighborPosition,
+                nodeRadius,
                 unwalkableLayers);
             grid[toNodeIndex].Id = toNodeIndex;
 
@@ -116,12 +116,12 @@ namespace MainGame
         private static void CreateNewNode(
             ref Node newNodeToCreate,
             ref Vector3 position,
-            float nodeRadius, 
+            float nodeRadius,
             LayerMask unwalkableLayers)
         {
             bool isWalkable = !Physics.CheckSphere(
-                position, 
-                nodeRadius, 
+                position,
+                nodeRadius,
                 unwalkableLayers);
 
             newNodeToCreate = new Node(isWalkable, position);
@@ -131,37 +131,71 @@ namespace MainGame
         {
             return GridBottomLeft
                 + Vector3.right * (x * nodeRadius * 2 + nodeRadius)
-                + Vector3.forward * (y * nodeRadius  * 2 + nodeRadius);
+                + Vector3.forward * (y * nodeRadius * 2 + nodeRadius);
         }
 
-        public Node NodeFromWorldPoint(Vector3 worldPosition)
+        public Node NodeFromWorldPoint(Vector3 position)//Vector3 worldPosition)
         {
             int x, y;
-            if (worldPosition.x < transform.position.x + 1)
+            if (position.x < transform.position.x + 1)
             {
                 x = 0;
             }
-            else if (worldPosition.x > transform.position.x + gridSize.x - 1) // since every box is 1 unit
+            else if (position.x > transform.position.x + gridSize.x - 1) // since every box is 1 unit
             {
                 x = gridSize.x - 1;
             }
             else
             {
-                var percentX = (worldPosition.x - transform.position.x - nodeRadius);
+                var percentX = (position.x - transform.position.x - nodeRadius);
                 x = Mathf.RoundToInt(percentX);
             }
 
-            if (worldPosition.z < transform.position.z + 1)
+            if (position.z < transform.position.z + 1)
             {
                 y = 0;
             }
-            else if (worldPosition.z > transform.position.z + gridSize.y - 1)
+            else if (position.z > transform.position.z + gridSize.y - 1)
             {
                 y = gridSize.x - 1;
             }
             else
             {
-                var percentY = (worldPosition.z - transform.position.z - nodeRadius);
+                var percentY = (position.z - transform.position.z - nodeRadius);
+                y = Mathf.RoundToInt(percentY);
+            }
+
+            return _grid[x * gridSize.y + y];
+        }
+
+        public Node NodeFromWorldPoint(float posx, float posy)//Vector3 worldPosition)
+        {
+            int x, y;
+            if (posx < transform.position.x + 1)
+            {
+                x = 0;
+            }
+            else if (posx > transform.position.x + gridSize.x - 1) // since every box is 1 unit
+            {
+                x = gridSize.x - 1;
+            }
+            else
+            {
+                var percentX = (posx - transform.position.x - nodeRadius);
+                x = Mathf.RoundToInt(percentX);
+            }
+
+            if (posy < transform.position.z + 1)
+            {
+                y = 0;
+            }
+            else if (posy > transform.position.z + gridSize.y - 1)
+            {
+                y = gridSize.x - 1;
+            }
+            else
+            {
+                var percentY = (posy - transform.position.z - nodeRadius);
                 y = Mathf.RoundToInt(percentY);
             }
 
@@ -176,7 +210,7 @@ namespace MainGame
             }
             var gridCenter = transform.position + Vector3.right * gridSize.x / 2 + Vector3.forward * gridSize.y / 2;
             Gizmos.DrawWireCube(gridCenter, new Vector3(gridSize.x, 1, gridSize.y));
-            
+
             if (_grid == null) return;
             DrawGrid();
 
@@ -192,14 +226,14 @@ namespace MainGame
 
         private void MarkPlayerTargetOnGrid(Vector3 size)
         {
-            var destination = NodeFromWorldPoint(target.position);
+            var destination = NodeFromWorldPoint(target.position.x, target.position.z);
             Gizmos.color = Color.red;
             Gizmos.DrawCube(destination.worldPosition, size);
         }
 
         private void MarkPlayerOnGrid(Vector3 size)
         {
-            var playerNode = NodeFromWorldPoint(player.position);
+            var playerNode = NodeFromWorldPoint(player.position.x, player.position.z);
             Gizmos.color = Color.green;
             Gizmos.DrawWireCube(playerNode.worldPosition, Vector3.one * (_nodeDiameter - 0.3f));
             Gizmos.DrawCube(player.position, size);

@@ -55,12 +55,9 @@ namespace MainGame
 
             if (!currentDestinationNode.isWalkable) return;
 
-            var pathTime = ExecutionTimer.Time(
-            () => _astarPathFinder.FindPathBetweenNodes(currentOriginNode, currentDestinationNode),
-            out _path);
-            //RuntimeLogger.LogDebug("Pathfinding", $"PathGenerated time {pathTime.TotalMilliseconds}", currentOriginNode);
-
-            //Debug.Break();
+            var pathTime = ExecutionTimer.Time(() =>
+                _path = _astarPathFinder
+                    .FindPathBetweenNodes(currentOriginNode, currentDestinationNode));
         }
 
         private void ResetDebugInformation()

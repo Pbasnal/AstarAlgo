@@ -10,12 +10,12 @@ namespace TestHelpers
         {
         }
 
-        public override double HeuristicCost(LocationNode fromNode, LocationNode toNode)
+        public override float HeuristicCost(LocationNode fromNode, LocationNode toNode)
         {
             var xDiffSquared = Math.Pow(toNode.X - fromNode.X, 2);
             var yDiffSquared = Math.Pow(toNode.Y - fromNode.Y, 2);
 
-            return Math.Sqrt(xDiffSquared + yDiffSquared);
+            return (float)Math.Sqrt(xDiffSquared + yDiffSquared);
         }
     }
 }

@@ -13,11 +13,11 @@ namespace Pathfinding
         public TNode[] FrontierNodes => _frontierNodes.ToArray();
 
         private List<TNode> _frontierNodes;
-        private double[] _nodeCost;
+        private float[] _nodeCost;
         private int[] _path;
-        private double[] _pathCost;
+        private float[] _pathCost;
         private bool[] _visitedNodes;
-        private double[] _heuristicCost;
+        private float[] _heuristicCost;
 
         private Dictionary<int, List<TEdge>> _nodeEdges;
         private static readonly List<TEdge> _emptyEdgeList = new List<TEdge>();
@@ -34,9 +34,9 @@ namespace Pathfinding
 
             _visitedNodes = new bool[nodes.Length];
             _path = new int[nodes.Length];
-            _nodeCost = new double[nodes.Length];
-            _pathCost = new double[nodes.Length];
-            _heuristicCost = new double[nodes.Length];
+            _nodeCost = new float[nodes.Length];
+            _pathCost = new float[nodes.Length];
+            _heuristicCost = new float[nodes.Length];
 
             _frontierNodes = new List<TNode>();
 
@@ -69,7 +69,7 @@ namespace Pathfinding
             }
             for (int i = 0; i < _nodeCost.Length; i++)
             {
-                _nodeCost[i] = double.MaxValue;
+                _nodeCost[i] = float.MaxValue;
                 _visitedNodes[i] = false;
             }
             _nodeCost[id] = 0; // Set starting node cost as 0
@@ -78,8 +78,8 @@ namespace Pathfinding
         public bool AddAFrontierNode(
             TNode newFrontierNode,
             TNode fromNode,
-            double edgeWeight,
-            double costToNode, double heuristicCost)
+            float edgeWeight,
+            float costToNode, float heuristicCost)
         {
             if (costToNode > _nodeCost[newFrontierNode.Id]
                 || _visitedNodes[newFrontierNode.Id])
@@ -105,7 +105,7 @@ namespace Pathfinding
 
             }
 
-            var minimumCost = double.MaxValue;
+            var minimumCost = float.MaxValue;
             var minimumCostNodeId = -1;
 
             for (int i = 0; i < _frontierNodes.Count; i++)
@@ -155,7 +155,7 @@ namespace Pathfinding
             return path;
         }
 
-        public double GetNodeCostOf(TNode node) => _nodeCost[node.Id];
+        public float GetNodeCostOf(TNode node) => _nodeCost[node.Id];
 
         public void SetNodeVisited(TNode node) => _visitedNodes[node.Id] = true;
     }

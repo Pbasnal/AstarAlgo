@@ -6,8 +6,8 @@
         public int Id { get; set; }
 
         public int PreviousNode { get; set; }
-        public double NodeCost { get; set; }
-        public double HeuristicCost { get; set; }
+        public float NodeCost { get; set; }
+        public float HeuristicCost { get; set; }
     }
 
     public interface IEdge<T> 
@@ -21,6 +21,6 @@
         where T : INode
     {
         new T OriginNode { get; set; }
-        public double Weight { get; set; }
+        public float Weight { get; set; }
     }
 }

@@ -19,7 +19,7 @@
 //        public string Payload { get; set; }
 //        public LogType LogType { get; set; }
 //        public int ThreadId { get; set; }
-//        public double TimeSinceLastEvent { get; set; }
+//        public float TimeSinceLastEvent { get; set; }
 //        public DateTime Timestamp { get; set; }
 //        //public string MachineName { get; set; }
 //        //public SystemInformation SystemInformation {get;set;}

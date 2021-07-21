@@ -28,7 +28,7 @@ namespace MainGame
         public GraphBuilder WithEdge(
             int fromNodeIndex,
             int toNodeIndex,
-            double weight)
+            float weight)
         {
             var edgeKey = $"{fromNodeIndex}{toNodeIndex}";
 

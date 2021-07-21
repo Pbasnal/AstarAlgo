@@ -10,7 +10,7 @@ namespace Pathfinding
         public TEdge[] Edges { get; }
 
         public TNode[] FrontierNodes { get; }
-        public double GetNodeCostOf(TNode node);
+        public float GetNodeCostOf(TNode node);
         public void SetNodeVisited(TNode node);
 
         public void ResetForNewOriginNode(TNode node);
@@ -20,8 +20,8 @@ namespace Pathfinding
         public bool AddAFrontierNode(
             TNode newFrontierNode,
             TNode fromNode,
-            double edgeWeight,
-            double costToNode, double heuristicCost);
+            float edgeWeight,
+            float costToNode, float heuristicCost);
 
         public bool TryGetNodeWithMinimumCost(out TNode nodeToProcess);
 

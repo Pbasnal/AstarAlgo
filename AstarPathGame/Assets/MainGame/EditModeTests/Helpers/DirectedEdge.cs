@@ -4,7 +4,7 @@ namespace TestHelpers
 {
     public class DirectedEdge : IWeightedEdge<LocationNode>
     {
-        public double Weight { get; set; }
+        public float Weight { get; set; }
 
         public LocationNode OriginNode { get; set; }
         public LocationNode DestinationNode { get; set; }
@@ -12,7 +12,7 @@ namespace TestHelpers
         public DirectedEdge()
         { }
 
-        public DirectedEdge(LocationNode originNode, LocationNode destinationNode, double cost)
+        public DirectedEdge(LocationNode originNode, LocationNode destinationNode, float cost)
         {
             OriginNode = originNode;
             DestinationNode = destinationNode;

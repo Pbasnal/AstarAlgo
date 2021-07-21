@@ -1055,9 +1055,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logsFolderPath: 
-  debugGameAtRunTime: 0
+  debugGameAtRunTime: 1
   breakPerFrame: 0
-  printDebugMessages: 0
+  printDebugMessages: 1
 --- !u!4 &2083903440
 Transform:
   m_ObjectHideFlags: 0

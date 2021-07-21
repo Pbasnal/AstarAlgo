@@ -4,7 +4,7 @@ namespace TestHelpers
 {
     public class LocationNode : INodeWithPriority
     {
-        public double Priority { get; set; }
+        public float Priority { get; set; }
 
         public string NodeId { get; set; }
 
@@ -14,8 +14,8 @@ namespace TestHelpers
         public int Y { get; set; }
 
         public int PreviousNode { get; set; }
-        public double NodeCost { get; set; }
-        public double HeuristicCost { get; set; }
+        public float NodeCost { get; set; }
+        public float HeuristicCost { get; set; }
 
         public LocationNode()
         { }

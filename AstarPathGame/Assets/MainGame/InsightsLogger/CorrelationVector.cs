@@ -3,7 +3,7 @@
 namespace InsightsLogger
 {
     [Serializable]
-    public struct CorrelationVector
+    public class CorrelationVector
     {
         public string OperationId { get; private set; }
         public double TimeSinceLastEventInMs { get; private set; }
@@ -12,7 +12,7 @@ namespace InsightsLogger
         private string _baseVector;
         private int _currentStep;
 
-        [ThreadStatic] public static CorrelationVector correlationVector;
+        [ThreadStatic] public static CorrelationVector correlationVector = new CorrelationVector("");        
 
         public string Vector
         {
