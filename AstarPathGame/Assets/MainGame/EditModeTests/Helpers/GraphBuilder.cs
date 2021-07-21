@@ -29,7 +29,7 @@ namespace TestHelpers
             return this;
         }
 
-        public GraphBuilder WithEdge(string fromNode, string toNode, double weight)
+        public GraphBuilder WithEdge(string fromNode, string toNode, float weight)
         {
             if (!_nodes.ContainsKey(fromNode)
                 || !_nodes.ContainsKey(toNode))

@@ -4,7 +4,7 @@ namespace Pathfinding
 {
     public interface IMinHeapNode : INode
     {
-        public double Priority { get; set; }
+        public float Priority { get; set; }
     }
 
     public class MinHeap<T> where T : IMinHeapNode

@@ -8,13 +8,13 @@ namespace MainGame
         public bool isWalkable;
         public Vector3 worldPosition;
 
-        public double Priority { get; set; }
+        public float Priority { get; set; }
         public int Id { get; set; }
 
         public string NodeId { get; set; }
         public int PreviousNode { get; set; }
-        public double NodeCost { get; set; }
-        public double HeuristicCost { get; set; }
+        public float NodeCost { get; set; }
+        public float HeuristicCost { get; set; }
 
         public Node()
         { }
@@ -35,7 +35,7 @@ namespace MainGame
 
     public class WeightedEdge : IWeightedEdge<Node>
     {
-        public double Weight { get; set; }
+        public float Weight { get; set; }
 
         public Node OriginNode { get; set; }
         public Node DestinationNode { get; set; }
@@ -43,7 +43,7 @@ namespace MainGame
         public WeightedEdge()
         { }
 
-        public WeightedEdge(Node originNode, Node destinationNode, double cost)
+        public WeightedEdge(Node originNode, Node destinationNode, float cost)
         {
             OriginNode = originNode;
             DestinationNode = destinationNode;

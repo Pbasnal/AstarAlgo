@@ -6,7 +6,9 @@ using InsightsLogger;
 namespace Pathfinding
 {
     public interface INodeWithPriority : IMinHeapNode, INode
-    {}
+    {
+        public bool IsVisited { get; set; }
+    }
 
     public class AstarDataWithHeap<TNode, TEdge> : IAstarData<TNode, TEdge>
         where TNode : INodeWithPriority, new()
@@ -17,10 +19,10 @@ namespace Pathfinding
 
         public TNode[] FrontierNodes => _frontierNodes._elements;
 
-        private MinHeap<TNode> _frontierNodes;
-        private double[] _nodeCost;
+        private SimpleMinHeap<TNode> _frontierNodes;
+        private float[] _nodeCost;
         private int[] _path;
-        private double[] _pathCost;
+        private float[] _pathCost;
         private bool[] _visitedNodes;
 
         private Dictionary<int, List<TEdge>> _nodeEdges;
@@ -38,10 +40,10 @@ namespace Pathfinding
 
             _visitedNodes = new bool[nodes.Length];
             _path = new int[nodes.Length];
-            _nodeCost = new double[nodes.Length];
-            _pathCost = new double[nodes.Length];
+            _nodeCost = new float[nodes.Length];
+            _pathCost = new float[nodes.Length];
 
-            _frontierNodes = new MinHeap<TNode>(nodes.Length);
+            _frontierNodes = new SimpleMinHeap<TNode>(nodes.Length);
 
             _nodeEdges = new Dictionary<int, List<TEdge>>();
             foreach (var edge in Edges)
@@ -62,26 +64,20 @@ namespace Pathfinding
             for (int i = 0; i < _path.Length; i++)
             {
                 _path[i] = -1;
-            }
-            for (int i = 0; i < _nodeCost.Length; i++)
-            {
-                _nodeCost[i] = double.MaxValue;
+                _nodeCost[i] = float.MaxValue;
                 _visitedNodes[i] = false;
+                _frontierNodes._elementIndexes[i] = -1;
             }
-            _nodeCost[id] = 0; // Set starting node cost as 0
-
-            //RuntimeLogger.LogDebug("ResetAstarData", "RestPath", _path);
-            //RuntimeLogger.LogDebug("ResetAstarData", "RestNodeCost", _nodeCost);
-            //RuntimeLogger.LogDebug("ResetAstarData", "RestVisisted", _visitedNodes);
-
-            _frontierNodes.Reset();
+            _nodeCost[id] = 0;
+            _frontierNodes._size = 0;
+            //_frontierNodes.Reset();
         }
 
         public bool AddAFrontierNode(
             TNode newFrontierNode,
             TNode fromNode,
-            double edgeWeight,
-            double costToNode, double heuristicCost)
+            float edgeWeight,
+            float costToNode, float heuristicCost)
         {
             if (costToNode > _nodeCost[newFrontierNode.Id]
                 || _visitedNodes[newFrontierNode.Id])
@@ -89,14 +85,10 @@ namespace Pathfinding
                 return false;
             }
 
-            
             newFrontierNode.Priority = costToNode + heuristicCost;
             newFrontierNode.PreviousNode = fromNode.Id;
 
-            var timer = Stopwatch.StartNew();
             _frontierNodes.Add(newFrontierNode);
-            timer.Stop(); 
-            //RuntimeLogger.LogDebug("MinHeap", $"Frontier update time {timer.Elapsed.TotalMilliseconds}", timer);
 
             _path[newFrontierNode.Id] = fromNode.Id;
             _nodeCost[newFrontierNode.Id] = costToNode;
@@ -150,7 +142,7 @@ namespace Pathfinding
             return path;
         }
 
-        public double GetNodeCostOf(TNode node) => _nodeCost[node.Id];
+        public float GetNodeCostOf(TNode node) => _nodeCost[node.Id];
 
         public void SetNodeVisited(TNode node) => _visitedNodes[node.Id] = true;
     }
