@@ -2,7 +2,8 @@
     "name": "MainGame",
     "rootNamespace": "",
     "references": [
-        "GUID:bdd6696d9c1dd91468d6b00fa0505245"
+        "GUID:bdd6696d9c1dd91468d6b00fa0505245",
+        "GUID:19b7661a03a31214ca6af7792f1cc1b8"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

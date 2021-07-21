@@ -3,12 +3,13 @@
 namespace Pathfinding
 {
     public interface IAstarData<TNode, TEdge>
-        where TNode : INode, new()
-        where TEdge : IWeightedEdge<TNode>, new()
+        where TNode : INode
+        where TEdge : IWeightedEdge<TNode>
     {
         public TNode[] Nodes { get; }
         public TEdge[] Edges { get; }
 
+        public TNode[] FrontierNodes { get; }
         public double GetNodeCostOf(TNode node);
         public void SetNodeVisited(TNode node);
 
@@ -20,7 +21,7 @@ namespace Pathfinding
             TNode newFrontierNode,
             TNode fromNode,
             double edgeWeight,
-            double cost);
+            double costToNode, double heuristicCost);
 
         public bool TryGetNodeWithMinimumCost(out TNode nodeToProcess);
 

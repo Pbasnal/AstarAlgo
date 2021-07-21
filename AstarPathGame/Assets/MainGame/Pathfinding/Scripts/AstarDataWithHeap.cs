@@ -1,17 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using InsightsLogger;
 
 namespace Pathfinding
 {
     public interface INodeWithPriority : IMinHeapNode, INode
     {}
 
-    public struct AstarDataWithHeap<TNode, TEdge> : IAstarData<TNode, TEdge>
+    public class AstarDataWithHeap<TNode, TEdge> : IAstarData<TNode, TEdge>
         where TNode : INodeWithPriority, new()
         where TEdge : IWeightedEdge<TNode>, new()
     {
         public TNode[] Nodes { get; }
         public TEdge[] Edges { get; }
+
+        public TNode[] FrontierNodes => _frontierNodes._elements;
 
         private MinHeap<TNode> _frontierNodes;
         private double[] _nodeCost;
@@ -65,25 +68,32 @@ namespace Pathfinding
                 _visitedNodes[i] = false;
             }
             _nodeCost[id] = 0; // Set starting node cost as 0
+
+            RuntimeLogger.LogDebug("ResetAstarData", "RestPath", _path);
+            RuntimeLogger.LogDebug("ResetAstarData", "RestNodeCost", _nodeCost);
+            RuntimeLogger.LogDebug("ResetAstarData", "RestVisisted", _visitedNodes);
+
+            _frontierNodes.Reset();
         }
 
         public bool AddAFrontierNode(
             TNode newFrontierNode,
             TNode fromNode,
             double edgeWeight,
-            double cost)
+            double costToNode, double heuristicCost)
         {
-            if (cost > _nodeCost[newFrontierNode.Id]
+            if (costToNode > _nodeCost[newFrontierNode.Id]
                 || _visitedNodes[newFrontierNode.Id])
             {
                 return false;
             }
 
-            newFrontierNode.Priority = cost;
-            _frontierNodes.Add(newFrontierNode);
+            newFrontierNode.Priority = costToNode + heuristicCost;
+            newFrontierNode.PreviousNode = fromNode.Id;
+            
+            _frontierNodes.Add(ref newFrontierNode);
             _path[newFrontierNode.Id] = fromNode.Id;
-            _nodeCost[newFrontierNode.Id] = cost;
-
+            _nodeCost[newFrontierNode.Id] = costToNode;
             _pathCost[newFrontierNode.Id] = edgeWeight;
             return true;
         }

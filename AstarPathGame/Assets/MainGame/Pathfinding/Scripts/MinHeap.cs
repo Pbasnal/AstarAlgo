@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using InsightsLogger;
 
 namespace Pathfinding
 {
@@ -9,12 +11,15 @@ namespace Pathfinding
 
     public class MinHeap<T> where T : IMinHeapNode
     {
-        private readonly T[] _elements;
+        public readonly T[] _elements;
         private int _size;
+
+        private Dictionary<int, int> _elementIndexes;
 
         public MinHeap(int size)
         {
             _elements = new T[size];
+            _elementIndexes = new Dictionary<int, int>();
         }
 
         private int GetLeftChildIndex(int elementIndex) => 2 * elementIndex + 1;
@@ -34,6 +39,9 @@ namespace Pathfinding
             var temp = _elements[firstIndex];
             _elements[firstIndex] = _elements[secondIndex];
             _elements[secondIndex] = temp;
+
+            _elementIndexes[_elements[firstIndex].GetHashCode()] = firstIndex;
+            _elementIndexes[_elements[secondIndex].GetHashCode()] = secondIndex;
         }
 
         public bool IsEmpty()
@@ -56,25 +64,51 @@ namespace Pathfinding
             _elements[0] = _elements[_size - 1];
             _size--;
 
-            ReCalculateDown();
+            ReCalculateDown(0);
 
             return result;
         }
 
-        public void Add(T element)
+        public void Add(ref T element)
         {
             if (_size == _elements.Length)
                 throw new IndexOutOfRangeException();
 
-            _elements[_size] = element;
-            _size++;
+            if (_elementIndexes.ContainsKey(element.GetHashCode()))
+            {
+                var elementId = _elementIndexes[element.GetHashCode()];
+                _elements[elementId] = element;
+                if (element.Priority < _elements[elementId].Priority)
+                {
+                    ReCalculateUp(elementId);
+                }
+                else 
+                {
+                    ReCalculateDown(elementId);
+                }
+                // write a test case for this
+            }
+            else
+            {
+                _elements[_size] = element;
+                _elementIndexes.Add(element.GetHashCode(), _size);
 
-            ReCalculateUp();
+                ReCalculateUp(_size);
+                _size++;
+            }
+
         }
 
-        private void ReCalculateDown()
+        public void Reset()
         {
-            int index = 0;
+            _size = 0;
+            _elementIndexes.Clear();
+            RuntimeLogger.LogDebug("MinHeap", "ResetSize", _size);
+        }
+
+        private void ReCalculateDown(int index)
+        {
+            //int index = 0;
             while (HasLeftChild(index))
             {
                 var smallerIndex = GetLeftChildIndex(index);
@@ -94,9 +128,9 @@ namespace Pathfinding
             }
         }
 
-        private void ReCalculateUp()
+        private void ReCalculateUp(int index)
         {
-            var index = _size - 1;
+            //var index = _size - 1;
             while (!IsRoot(index)
                 && _elements[index].Priority < GetParent(index).Priority)
             {

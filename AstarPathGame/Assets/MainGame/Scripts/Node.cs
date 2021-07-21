@@ -12,6 +12,9 @@ namespace MainGame
         public int Id { get; set; }
 
         public string NodeId { get; set; }
+        public int PreviousNode { get; set; }
+        public double NodeCost { get; set; }
+        public double HeuristicCost { get; set; }
 
         public Node(bool isWalkable, Vector3 worldPosition)
         {
@@ -20,6 +23,10 @@ namespace MainGame
             this.worldPosition = worldPosition;
             Priority = 0;
             Id = 0;
+
+            PreviousNode = 0;
+            NodeCost = 0;
+            HeuristicCost = 0;
         }
     }
 
