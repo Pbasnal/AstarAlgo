@@ -3,27 +3,47 @@ using Pathfinding;
 
 namespace MainGame
 {
-    public class GoapData// : IAstarData<AgentState, AgentAction>
+    public class GoapData
     {
+        public AgentState currentState;
+
         public Dictionary<int, AgentState> Nodes { get; }
-        public AgentAction[] Edges { get; }
+        public IAgentAction[] Actions { get; }
 
         public AgentState[] FrontierNodes => _frontierNodes._elements;
 
         private SimpleMinHeap<AgentState> _frontierNodes;
-        private float[] _nodeCost;
-        //private float[] _pathCost;
-        private bool[] _visitedNodes;
 
-        private Dictionary<int, List<AgentAction>> _nodeEdges;
-        private static readonly List<AgentAction> _emptyEdgeList = new List<AgentAction>();
+        private Dictionary<int, List<IAgentAction>> _nodeEdges;
+        private static readonly List<IAgentAction> _emptyEdgeList = new List<IAgentAction>();
+
+        public GoapData(IAgentAction[] agentActions)
+        {
+            Actions = agentActions;
+            currentState = AgentState.New();
+            Nodes = new Dictionary<int, AgentState>();
+            _frontierNodes = new SimpleMinHeap<AgentState>(1000);
+        }
+
+        public void SetState(AgentStateKey stateKey, int stateValue)
+        {
+            if (!currentState.stateData.ContainsKey(stateKey))
+            {
+                currentState.stateData.Add(stateKey, 0);
+            }
+            currentState.stateData[stateKey] = stateValue;
+        }
 
         public void ResetForNewOriginNode(AgentState node)
-        { }
+        {
+            Nodes.Clear();
+            //Nodes.Add(node.Id, node);
+        }
 
         public bool AddAFrontierNode(
+            AgentState fromNode,
             AgentState newFrontierNode,
-            AgentAction withAction,
+            IAgentAction withAction,
             float costToNode, float heuristicCost)
         {
             // assign id if it's a new node
@@ -32,17 +52,18 @@ namespace MainGame
                 newFrontierNode.Id = Nodes.Count;
                 Nodes.Add(newFrontierNode.Id, newFrontierNode);
             }
-            if (costToNode > Nodes[newFrontierNode.Id].NodeCost
+            else if (costToNode > Nodes[newFrontierNode.Id].NodeCost
                 || Nodes[newFrontierNode.Id].IsVisited)
             {
                 return false;
             }
 
-            Nodes[newFrontierNode.Id].Priority = 
+            Nodes[newFrontierNode.Id].Priority =
                 costToNode + heuristicCost;
             Nodes[newFrontierNode.Id].ActionForThisNode = withAction;
             Nodes[newFrontierNode.Id].HeuristicCost = heuristicCost;
             Nodes[newFrontierNode.Id].NodeCost = costToNode;
+            Nodes[newFrontierNode.Id].PreviousNode = fromNode == null ? 0 : fromNode.Id;
 
             _frontierNodes.Add(newFrontierNode);
             return true;
@@ -60,10 +81,10 @@ namespace MainGame
             return true;
         }
 
-        public List<AgentAction> GetEdgesOriginatingFromNode(AgentState node)
+        public List<IAgentAction> GetEdgesOriginatingFromNode(AgentState node)
         {
-            List<AgentAction> actions = new List<AgentAction>();
-            foreach (var action in Edges)
+            List<IAgentAction> actions = new List<IAgentAction>();
+            foreach (var action in Actions)
             {
                 if (action.CheckPreconditions(node))
                 {
@@ -74,22 +95,23 @@ namespace MainGame
             return actions;
         }
 
-        public List<AgentAction> GetPathTo(int destinationId)
+        public List<IAgentAction> GetPathTo(int destinationId)
         {
-            var path = new List<AgentAction>();
+            var path = new List<IAgentAction>();
 
             var startingNodeId = destinationId;
+            var nextNodeInPathId = Nodes[destinationId].PreviousNode;
+            path.Insert(0, Nodes[destinationId].ActionForThisNode);
 
-            //while (startingNodeId != nextNodeInPathId && nextNodeInPathId != -1)
+            while (startingNodeId != nextNodeInPathId 
+                && nextNodeInPathId != -1
+                && nextNodeInPathId != 0)
             {
-                //var edgeInPath = new AgentAction();
-                //edgeInPath.OriginNode = Nodes[nextNodeInPathId];
-                //edgeInPath.DestinationNode = Nodes[startingNodeId];
+                var edgeInPath = Nodes[nextNodeInPathId].ActionForThisNode;
+                path.Insert(0, edgeInPath);
 
-                //path.Insert(0, edgeInPath);
-
-                //startingNodeId = nextNodeInPathId;
-                //nextNodeInPathId = _path[Nodes[nextNodeInPathId].Id];
+                startingNodeId = nextNodeInPathId;
+                nextNodeInPathId = Nodes[nextNodeInPathId].PreviousNode;
             }
 
             return path;

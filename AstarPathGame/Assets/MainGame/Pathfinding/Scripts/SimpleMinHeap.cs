@@ -6,6 +6,7 @@ namespace Pathfinding
 {
     public class SimpleHeapNode : INodeWithPriority
     {
+        public bool IsVisited { get; set; }
         public int Id { get; set; }
         public float Priority { get; set; }
 

@@ -5,6 +5,7 @@ namespace MainGame
 {
     public class Node : INodeWithPriority
     {
+        public bool IsVisited { get; set; }
         public bool isWalkable;
         public Vector3 worldPosition;
 

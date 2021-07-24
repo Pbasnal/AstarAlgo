@@ -13,18 +13,19 @@ namespace MainGame
 
         public bool IsVisited { get; set; }
         public int Id { get; set; }
-        public AgentAction ActionForThisNode { get; set; }
+        public IAgentAction ActionForThisNode { get; set; }
         public float NodeCost { get; set; }
         public float HeuristicCost { get; set; }
         public float Priority { get; set; }
         public int PreviousNode { get; set; }
 
-        public int[] stateData;
+        //public int[] stateData;
+        public IDictionary<AgentStateKey, int> stateData;
 
         private AgentState()
         {
             Id = -1;
-            stateData = new int[StateSize];
+            stateData = new Dictionary<AgentStateKey, int>();// int[StateSize];
         }
 
         public static AgentState New()
@@ -34,46 +35,81 @@ namespace MainGame
 
         public void Set(AgentStateKey stateKey, int value)
         {
-            stateData[(int)stateKey] = value;
+            stateData[stateKey] = value;
         }
 
         public AgentState Clone()
         {
             var newState = new AgentState();
 
-            for (int i = 0; i < StateSize; i++)
+            foreach (var pair in stateData)
             {
-                newState.stateData[i] = stateData[i];
+                newState.stateData[pair.Key] = stateData[pair.Key];
             }
 
             return newState;
         }
     }
 
-    public class AgentAction : IWeightedEdge<AgentState>
+    public interface IAgentAction
+    {
+        public float Weight { get; set; }
+        //public AgentState OriginNode { get; set; }
+        //public AgentState DestinationNode { get; set; }
+
+        public bool CheckPreconditions(AgentState node);
+        public AgentState GetGeneratedState(AgentState originNode);
+    }
+
+    public abstract class AnAgentAction : IAgentAction
     {
         public float Weight { get; set; }
 
-        public AgentState OriginNode { get; set; }
-        public AgentState DestinationNode { get; set; }
+        public IDictionary<AgentStateKey, int> preConditions { get; }
+        public IDictionary<AgentStateKey, int> effects { get; }
 
-        public AgentAction(AgentState originNode, AgentState destinationNode, float cost)
+        public AnAgentAction()
         {
-            OriginNode = originNode;
-            DestinationNode = destinationNode;
-
-            Weight = cost;
+            preConditions = new Dictionary<AgentStateKey, int>();
+            effects = new Dictionary<AgentStateKey, int>();
         }
 
-        internal bool CheckPreconditions(AgentState node)
+        public virtual bool CheckPreconditions(AgentState node)
         {
-            throw new NotImplementedException();
+            foreach (var condition in preConditions)
+            {
+                if (!node.stateData.ContainsKey(condition.Key)
+                    || node.stateData[condition.Key] != condition.Value)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        public virtual AgentState GetGeneratedState(AgentState originNode)
+        {
+            var state = originNode.Clone();
+
+            foreach (var effect in effects)
+            {
+                if (!state.stateData.ContainsKey(effect.Key))
+                {
+                    state.stateData.Add(effect.Key, effect.Value);
+                }
+                else
+                {
+                    state.stateData[effect.Key] = effect.Value;
+                }
+            }
+
+            return state;
         }
     }
 
     public class GoapPlanner
     {
-        public List<AgentAction> computedPath;
+        public List<IAgentAction> computedPath;
         private GoapData _goapData;
 
         public GoapPlanner(GoapData goapData)
@@ -81,42 +117,42 @@ namespace MainGame
             _goapData = goapData;
         }
 
-        public AgentState FindPathBetweenNodes(AgentState originNode,
-            AgentState destinationNode)
+        public List<IAgentAction> FindActionsTo(AgentState destinationNode)
         {
-            _goapData.ResetForNewOriginNode(originNode);
+            var fromNode = _goapData.currentState;
+            _goapData.ResetForNewOriginNode(fromNode);
 
-            var heuristicCost = HeuristicCost(_goapData.Nodes[originNode.Id],
-                destinationNode);
-            _goapData.AddAFrontierNode(originNode, null, 0, heuristicCost);
-            while (_goapData.TryGetNodeWithMinimumCost(out originNode))
+            var heuristicCost = HeuristicCost(fromNode, destinationNode);
+            _goapData.AddAFrontierNode(null, fromNode, null, 0, heuristicCost);
+            while (_goapData.TryGetNodeWithMinimumCost(out fromNode))
             {
-                if (originNode.Id == destinationNode.Id)
+                heuristicCost = HeuristicCost(fromNode, destinationNode);
+                if (heuristicCost == 0)
                 {
+                    destinationNode = fromNode;
                     break;
                 }
-                var actions = _goapData.GetEdgesOriginatingFromNode(originNode);
+                var actions = _goapData.GetEdgesOriginatingFromNode(fromNode);
 
-                foreach (var edge in actions)
+                foreach (var action in actions)
                 {
-                    TryAddFrontierNode(originNode, destinationNode, edge);
+                    var newState = action.GetGeneratedState(fromNode);
+                    TryAddFrontierNode(fromNode, newState, action);
                 }
-                _goapData.SetNodeVisited(originNode);
+                _goapData.SetNodeVisited(fromNode);
             }
 
-            //var path = _goapData.GetPathTo(destinationNode.Id);
-
-            return destinationNode;
+            return _goapData.GetPathTo(destinationNode.Id);
         }
 
-        private float TryAddFrontierNode(AgentState originNode, 
-            AgentState destinationNode, AgentAction edge)
+        private float TryAddFrontierNode(AgentState originNode,
+            AgentState newNode, IAgentAction edge)
         {
-            float heuristicCost = HeuristicCost(originNode, destinationNode);
+            var heuristicCost = HeuristicCost(originNode, newNode);
             var nodeCost = _goapData.GetNodeCostOf(originNode) + edge.Weight;
 
             var nodeGotAdded = _goapData.AddAFrontierNode(
-                destinationNode, edge, nodeCost, heuristicCost);
+                originNode, newNode, edge, nodeCost, heuristicCost);
 
             //if (nodeGotAdded)
             //{
@@ -130,9 +166,17 @@ namespace MainGame
         {
             var distance = 0.0f;
 
-            for (int i = 0; i < AgentState.StateSize; i++)
+            foreach (var tostate in toNode.stateData)
             {
-                var diff = toNode.stateData[i] - fromNode.stateData[i];
+                float diff;
+                if (!fromNode.stateData.ContainsKey(tostate.Key))
+                {
+                    diff = 1;
+                }
+                else
+                {
+                    diff = toNode.stateData[tostate.Key] - fromNode.stateData[tostate.Key];
+                }
                 distance += diff * diff;
             }
 
@@ -142,7 +186,11 @@ namespace MainGame
 
     public enum AgentStateKey
     {
-        TargetInSight = 0
+        TargetInSight = 0,
+        OutOfSight,
+        TargetInRange,
+        CanWalk,
+        EnemyIsDead
     }
 }
 
