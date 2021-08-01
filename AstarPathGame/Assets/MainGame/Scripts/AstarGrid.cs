@@ -18,7 +18,7 @@ namespace MainGame
         private float _nodeDiameter => nodeRadius * 2;
 
         public IAstarData<Node, WeightedEdge> GridGraph { get; private set; }
-
+         
         private void Start()
         {
             _grid = new Node[gridSize.x * gridSize.y];

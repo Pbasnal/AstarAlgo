@@ -1,14 +1,19 @@
-﻿namespace MainGame.Actions
+﻿using UnityEngine;
+
+namespace MainGame.Actions
 {
+    [CreateAssetMenu(fileName = "ReachTargetAction", menuName = "GoapActions/ReachTargetAction", order = 52)]
     public class ReachTargetAction : AnAgentAction
     {
-        public ReachTargetAction()
+        public override void Init()
         {
-            preConditions.Add(AgentStateKey.CanWalk, 1);
+            preConditions = new State();
+            preConditions.Set(AgentStateKey.CanWalk, 1);
 
-            effects.Add(AgentStateKey.OutOfSight, 0);
-            effects.Add(AgentStateKey.TargetInSight, 1);
-            effects.Add(AgentStateKey.TargetInRange, 1);
+            effects = new State();
+            effects.Set(AgentStateKey.AgentOutOfSight, 0);
+            effects.Set(AgentStateKey.TargetInSight, 1);
+            effects.Set(AgentStateKey.TargetInRange, 1);
 
             Weight = 1;
         }

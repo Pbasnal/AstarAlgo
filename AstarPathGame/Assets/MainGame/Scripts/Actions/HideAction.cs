@@ -1,16 +1,25 @@
-﻿namespace MainGame.Actions
+﻿using UnityEngine;
+
+namespace MainGame.Actions
 {
+    [
+        CreateAssetMenu(
+            fileName = "HideAction",
+            menuName = "GoapActions/HideAction",
+            order = 52)
+    ]
     public class HideAction : AnAgentAction
     {
-        public HideAction()
+        public override void Init()
         {
-            preConditions.Add(AgentStateKey.CanWalk, 1);
+            preConditions = new State();
+            preConditions.Set(AgentStateKey.CanWalk, 1);
 
-            effects.Add(AgentStateKey.OutOfSight, 1);
-            effects.Add(AgentStateKey.TargetInRange, 0);
+            effects = new State();
+            effects.Set(AgentStateKey.AgentOutOfSight, 1);
+            effects.Set(AgentStateKey.TargetInRange, 0);
 
             Weight = 1;
         }
     }
 }
-

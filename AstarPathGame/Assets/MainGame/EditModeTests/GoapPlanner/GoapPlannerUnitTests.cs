@@ -4,7 +4,7 @@ using System.Linq;
 using MainGame;
 using NUnit.Framework;
 
-namespace PathfindingTests
+namespace GoapPlannerTests
 {
     public class GoapPlannerUnitTests
     {
@@ -12,6 +12,10 @@ namespace PathfindingTests
         public void TestGoap()
         {
             var actions = GetAllAgentActions().ToArray();
+            Assert.IsTrue(actions != null && actions.Count() > 0);
+
+            foreach (var action in actions) action.Init();
+            
             var goapData = new GoapData(actions);
             var planner = new GoapPlanner(goapData);
 
@@ -23,12 +27,12 @@ namespace PathfindingTests
             var actionPath = planner.FindActionsTo(destinationNode);
         }
 
-        private IEnumerable<IAgentAction> GetAllAgentActions()
+        private IEnumerable<AnAgentAction> GetAllAgentActions()
         {
-            return System.Reflection.Assembly.GetAssembly(typeof(IAgentAction))
+            return System.Reflection.Assembly.GetAssembly(typeof(AnAgentAction))
                 .GetTypes()
-                .Where(type => typeof(IAgentAction).IsAssignableFrom(type) && type.IsClass && !type.IsAbstract)
-                .Select(type => (IAgentAction)Activator.CreateInstance(type));
+                .Where(type => typeof(AnAgentAction).IsAssignableFrom(type) && type.IsClass && !type.IsAbstract)
+                .Select(type => (AnAgentAction)Activator.CreateInstance(type));
         }
     }
 }

@@ -27,11 +27,7 @@ namespace MainGame
 
         public void SetState(AgentStateKey stateKey, int stateValue)
         {
-            if (!currentState.stateData.ContainsKey(stateKey))
-            {
-                currentState.stateData.Add(stateKey, 0);
-            }
-            currentState.stateData[stateKey] = stateValue;
+            currentState.Set(stateKey, stateValue);
         }
 
         public void ResetForNewOriginNode(AgentState node)
@@ -73,7 +69,7 @@ namespace MainGame
         {
             if (_frontierNodes.IsEmpty())
             {
-                nodeToProcess = default(AgentState);
+                nodeToProcess = null;
                 return false;
             }
 
@@ -103,7 +99,7 @@ namespace MainGame
             var nextNodeInPathId = Nodes[destinationId].PreviousNode;
             path.Insert(0, Nodes[destinationId].ActionForThisNode);
 
-            while (startingNodeId != nextNodeInPathId 
+            while (startingNodeId != nextNodeInPathId
                 && nextNodeInPathId != -1
                 && nextNodeInPathId != 0)
             {

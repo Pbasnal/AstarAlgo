@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -176,7 +176,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e145566867a56f04195a74c243fd0978, type: 2}
+  - {fileID: 2100000, guid: cebdd415956b14291a6534b4870c42a0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -219,7 +219,7 @@ Transform:
   m_Children:
   - {fileID: 1672221169}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &454220770
 GameObject:
@@ -273,7 +273,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5596209cb20c22b418de8267642ea5e5, type: 2}
+  - {fileID: 2100000, guid: ab473b9b8713f4c41897e4312f6a067d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -462,7 +462,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5596209cb20c22b418de8267642ea5e5, type: 2}
+  - {fileID: 2100000, guid: ab473b9b8713f4c41897e4312f6a067d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -504,7 +504,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &934964897
 GameObject:
@@ -558,7 +558,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5596209cb20c22b418de8267642ea5e5, type: 2}
+  - {fileID: 2100000, guid: ab473b9b8713f4c41897e4312f6a067d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -654,7 +654,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5596209cb20c22b418de8267642ea5e5, type: 2}
+  - {fileID: 2100000, guid: ab473b9b8713f4c41897e4312f6a067d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -875,7 +875,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1672221168
 GameObject:
@@ -920,15 +920,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1500e2b3f0f674240b85d4db18ebdc29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unwalkableLayers:
-    serializedVersion: 2
-    m_Bits: 64
-  gridSize: {x: 100, y: 100}
-  nodeRadius: 0.5
-  drawGrid: 1
-  player: {fileID: 2138352345}
-  target: {fileID: 1377259179}
-  GridBottomLeft: {x: 0, y: 0, z: 0}
 --- !u!1 &1928387049
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,7 +972,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5596209cb20c22b418de8267642ea5e5, type: 2}
+  - {fileID: 2100000, guid: ab473b9b8713f4c41897e4312f6a067d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1054,10 +1045,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baa1690d10fb46847bca5092a69a4adb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logsFolderPath: 
-  debugGameAtRunTime: 1
-  breakPerFrame: 0
-  printDebugMessages: 1
 --- !u!4 &2083903440
 Transform:
   m_ObjectHideFlags: 0
@@ -1070,7 +1057,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2138352341
 GameObject:
@@ -1086,7 +1073,7 @@ GameObject:
   - component: {fileID: 2138352342}
   - component: {fileID: 2138352346}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Goap Agent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1168,7 +1155,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2138352346
 MonoBehaviour:
@@ -1179,11 +1166,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2138352341}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 217498a154721344a9ca1aa2647789f0, type: 3}
+  m_Script: {fileID: 11500000, guid: 1befe9fceb14640ea89b956cfd61b4ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugPath: 1
-  debugPathFindingProcess: 0
-  debugTextOffset: {x: 0.3, y: 0, z: -0.3}
-  grid: {fileID: 0}
-  target: {fileID: 1377259179}
+  agentActions:
+  - {fileID: 11400000, guid: 159486f2e1fd84b9286d5f11e1450c9b, type: 2}
+  - {fileID: 11400000, guid: 3a02510c5c66446ea91822454c4f1971, type: 2}
+  - {fileID: 11400000, guid: ae92143f2c67f4f20a520c5f40672036, type: 2}
+  goalState: {fileID: 11400000, guid: 06fd9640087c94da6b9f62443cce1149, type: 2}
+  actionPath: []
