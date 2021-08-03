@@ -1173,5 +1173,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 159486f2e1fd84b9286d5f11e1450c9b, type: 2}
   - {fileID: 11400000, guid: 3a02510c5c66446ea91822454c4f1971, type: 2}
   - {fileID: 11400000, guid: ae92143f2c67f4f20a520c5f40672036, type: 2}
-  goalState: {fileID: 11400000, guid: 06fd9640087c94da6b9f62443cce1149, type: 2}
+  goalState: {fileID: 11400000, guid: 44a521add274842da99b2f41ee5c5257, type: 2}
+  currentState: {fileID: 11400000, guid: 5f77876f40b3545f2b58428ec29cda4a, type: 2}
   actionPath: []

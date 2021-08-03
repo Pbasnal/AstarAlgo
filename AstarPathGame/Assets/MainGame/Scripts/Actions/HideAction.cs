@@ -13,11 +13,12 @@ namespace MainGame.Actions
         public override void Init()
         {
             preConditions = new State();
-            preConditions.Set(AgentStateKey.CanWalk, 1);
+            preConditions.Set(AgentStateKey.CanWalk);
 
             effects = new State();
-            effects.Set(AgentStateKey.AgentOutOfSight, 1);
-            effects.Set(AgentStateKey.TargetInRange, 0);
+            effects.Set(AgentStateKey.AgentOutOfSight
+                | AgentStateKey.TargetOutOfRange 
+                | AgentStateKey.TargetOutOfSight);
 
             Weight = 1;
         }

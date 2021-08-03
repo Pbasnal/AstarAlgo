@@ -5,15 +5,16 @@ using UnityEngine;
 
 public class GoapAgent : MonoBehaviour
 {
-    public  AnAgentAction[] agentActions;
+    public AnAgentAction[] agentActions;
 
     // Todo: Should be private and assigned by another system
     // that another system should be specific to selecting goals
     public AgentState goalState;
+    public AgentState currentState;
 
     public List<AnAgentAction> actionPath;
 
-    private GoapData _goapData;
+    private GoapData<AgentState> _goapData;
 
     private GoapPlanner _planner;
 
@@ -23,15 +24,16 @@ public class GoapAgent : MonoBehaviour
         {
             return;
         }
-        
-        _goapData = new GoapData(agentActions);
-        _planner = new GoapPlanner(_goapData);
+
+        _goapData = new GoapData<AgentState>();
+        _planner = new GoapPlanner(_goapData, agentActions);
 
         // Todo: Remove this after testing. State should get set by sensors
-        _goapData.SetState(AgentStateKey.CanWalk, 1);
+        //currentState.Set(AgentStateKey.CanWalk);
     }
 
-    private void Start() {
-        actionPath = _planner.FindActionsTo(goalState).Select(a => (AnAgentAction)a).ToList();
+    private void Start()
+    {
+        actionPath = _planner.FindActionsTo(currentState, goalState).Select(a => (AnAgentAction)a).ToList();
     }
 }

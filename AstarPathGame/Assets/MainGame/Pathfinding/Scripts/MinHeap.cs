@@ -84,7 +84,9 @@ namespace Pathfinding
             }
 
             var elementId = _elementIndexes[element.Id];
-            _elements[elementId] = element;
+            //! why is it getting assigned and then compared?
+            //! the following if statement is useless after this
+            _elements[elementId] = element; 
             if (element.Priority <= _elements[elementId].Priority)
             {
                 ReCalculateUp(elementId);

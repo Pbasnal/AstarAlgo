@@ -13,14 +13,6 @@ MonoBehaviour:
   m_Name: ReachTargetAction
   m_EditorClassIdentifier: 
   preConditions:
-    stateData:
-    - stateName: 3
-      value: 1
+    stateValue: 64
   effects:
-    stateData:
-    - stateName: 1
-      value: 0
-    - stateName: 0
-      value: 1
-    - stateName: 2
-      value: 1
+    stateValue: 33

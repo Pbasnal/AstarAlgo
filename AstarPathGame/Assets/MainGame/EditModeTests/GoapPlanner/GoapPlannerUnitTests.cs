@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MainGame;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace GoapPlannerTests
 {
@@ -16,15 +17,23 @@ namespace GoapPlannerTests
 
             foreach (var action in actions) action.Init();
             
-            var goapData = new GoapData(actions);
-            var planner = new GoapPlanner(goapData);
+            var goapData = new GoapData<AgentState>();
+            var planner = new GoapPlanner(goapData, actions);
 
-            goapData.SetState(AgentStateKey.CanWalk, 1);
+            var currentState = AgentState.New();
+            currentState.Set(AgentStateKey.CanWalk);
 
-            var destinationNode = goapData.currentState.Clone();
-            destinationNode.Set(AgentStateKey.EnemyIsDead, 1);
+            var destinationNode = currentState.Clone();
+            destinationNode.Set(AgentStateKey.EnemyIsDead);
 
-            var actionPath = planner.FindActionsTo(destinationNode);
+            var actionPath = planner.FindActionsTo(currentState, destinationNode);
+            Assert.IsNotNull(actionPath);
+            Assert.IsTrue(actionPath.Count() == 2);
+
+            foreach (var action in actionPath)
+            {
+                Debug.Log($"Action: {action.GetType().Name}");
+            }
         }
 
         private IEnumerable<AnAgentAction> GetAllAgentActions()

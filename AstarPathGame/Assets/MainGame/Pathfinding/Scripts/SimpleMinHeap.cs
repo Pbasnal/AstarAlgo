@@ -1,39 +1,31 @@
 ﻿using System;
-using System.Threading;
-
 
 namespace Pathfinding
 {
-    public class SimpleHeapNode : INodeWithPriority
+    public class SimpleHeapNode<T>
     {
-        public bool IsVisited { get; set; }
-        public int Id { get; set; }
         public float Priority { get; set; }
-
-        public SimpleHeapNode(int id, float priority)
+        public T Data { get; set; }
+        private SimpleHeapNode(float priority, T data)
         {
-            Id = id;
             Priority = priority;
+            Data = data;
         }
 
-        public string NodeId { get; }
-
-        public int PreviousNode { get; set; }
-        public float NodeCost { get; set; }
-        public float HeuristicCost { get; set; }
+        public static SimpleHeapNode<T> New(float priority, T data)
+        {
+            return new SimpleHeapNode<T>(priority, data);
+        }
     }
 
-    public class SimpleMinHeap<TNode> where TNode : INodeWithPriority
+    public class SimpleMinHeap<TNode>
     {
-        public readonly TNode[] _elements;
+        public readonly SimpleHeapNode<TNode>[] _elements;
         public int _size;
-        public int[] _elementIndexes;
 
         public SimpleMinHeap(int size)
         {
-            _elements = new TNode[size];
-            _elementIndexes = new int[size];
-            Reset();
+            _elements = new SimpleHeapNode<TNode>[size];
         }
 
         private int GetLeftChildIndex(int elementIndex) => 2 * elementIndex + 1;
@@ -44,18 +36,15 @@ namespace Pathfinding
         private bool HasRightChild(int elementIndex) => GetRightChildIndex(elementIndex) < _size;
         private bool IsRoot(int elementIndex) => elementIndex == 0;
 
-        private TNode GetLeftChild(int elementIndex) => _elements[GetLeftChildIndex(elementIndex)];
-        private TNode GetRightChild(int elementIndex) => _elements[GetRightChildIndex(elementIndex)];
-        private TNode GetParent(int elementIndex) => _elements[GetParentIndex(elementIndex)];
+        private SimpleHeapNode<TNode> GetLeftChild(int elementIndex) => _elements[GetLeftChildIndex(elementIndex)];
+        private SimpleHeapNode<TNode> GetRightChild(int elementIndex) => _elements[GetRightChildIndex(elementIndex)];
+        private SimpleHeapNode<TNode> GetParent(int elementIndex) => _elements[GetParentIndex(elementIndex)];
 
         private void Swap(int firstIndex, int secondIndex)
         {
             var temp = _elements[firstIndex];
             _elements[firstIndex] = _elements[secondIndex];
             _elements[secondIndex] = temp;
-
-            _elementIndexes[_elements[firstIndex].Id] = firstIndex;
-            _elementIndexes[_elements[secondIndex].Id] = secondIndex;
         }
 
         public bool IsEmpty()
@@ -63,13 +52,13 @@ namespace Pathfinding
             return _size == 0;
         }
 
-        public TNode Peek()
+        public SimpleHeapNode<TNode> Peek()
         {
             return _size == 0 ?
                 throw new IndexOutOfRangeException() : _elements[0];
         }
 
-        public TNode Pop()
+        public SimpleHeapNode<TNode> Pop()
         {
             if (_size == 0)
                 throw new IndexOutOfRangeException();
@@ -81,47 +70,19 @@ namespace Pathfinding
             return result;
         }
 
-        public bool Add(TNode element)
+        public bool Add(float priority, TNode element)
         {
-            if (_elementIndexes[element.Id] == -1)
-            {
-                if (_size == _elements.Length)
-                    return false; // throw new IndexOutOfRangeException();
+            if (_size == _elements.Length)
+                return false;
+            _elements[_size] = SimpleHeapNode<TNode>.New(priority, element);
 
-                _elements[_size] = element;
-                _elementIndexes[element.Id] = _size;
-
-                ReCalculateUp(_size);
-                _size++;
-                return true;
-            }
-
-            var elementId = _elementIndexes[element.Id];
-            _elements[elementId] = element;
-            if (element.Priority <= _elements[elementId].Priority)
-            {
-                ReCalculateUp(elementId);
-            }
-            else
-            {
-                ReCalculateDown(elementId);
-            }
-
+            ReCalculateUp(_size);
+            _size++;
             return true;
-        }
-
-        public void Reset()
-        {
-            _size = 0;
-            for (int i = 0; i < _elementIndexes.Length; i++)
-            {
-                _elementIndexes[i] = -1;
-            }
         }
 
         private void ReCalculateDown(int index)
         {
-            //int index = 0;
             while (HasLeftChild(index))
             {
                 var smallerIndex = GetLeftChildIndex(index);
@@ -143,7 +104,6 @@ namespace Pathfinding
 
         private void ReCalculateUp(int index)
         {
-            //var index = _size - 1;
             while (!IsRoot(index)
                 && _elements[index].Priority < GetParent(index).Priority)
             {

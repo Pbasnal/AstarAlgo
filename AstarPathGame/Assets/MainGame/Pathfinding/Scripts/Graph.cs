@@ -4,7 +4,6 @@
     {
         public string NodeId { get; }
         public int Id { get; set; }
-
         public int PreviousNode { get; set; }
         public float NodeCost { get; set; }
         public float HeuristicCost { get; set; }

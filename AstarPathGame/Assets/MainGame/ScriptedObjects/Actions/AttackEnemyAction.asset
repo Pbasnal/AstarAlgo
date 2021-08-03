@@ -13,16 +13,6 @@ MonoBehaviour:
   m_Name: AttackEnemyAction
   m_EditorClassIdentifier: 
   preConditions:
-    stateData:
-    - stateName: 3
-      value: 1
-    - stateName: 0
-      value: 1
-    - stateName: 2
-      value: 1
-    - stateName: 1
-      value: 0
+    stateValue: 97
   effects:
-    stateData:
-    - stateName: 4
-      value: 1
+    stateValue: 512

@@ -17,8 +17,6 @@ namespace Pathfinding
         public TNode[] Nodes { get; }
         public TEdge[] Edges { get; }
 
-        public TNode[] FrontierNodes => _frontierNodes._elements;
-
         private SimpleMinHeap<TNode> _frontierNodes;
         private float[] _nodeCost;
         private int[] _path;
@@ -66,11 +64,9 @@ namespace Pathfinding
                 _path[i] = -1;
                 _nodeCost[i] = float.MaxValue;
                 _visitedNodes[i] = false;
-                _frontierNodes._elementIndexes[i] = -1;
             }
             _nodeCost[id] = 0;
             _frontierNodes._size = 0;
-            //_frontierNodes.Reset();
         }
 
         public bool AddAFrontierNode(
@@ -85,10 +81,9 @@ namespace Pathfinding
                 return false;
             }
 
-            newFrontierNode.Priority = costToNode + heuristicCost;
             newFrontierNode.PreviousNode = fromNode.Id;
 
-            _frontierNodes.Add(newFrontierNode);
+            _frontierNodes.Add(costToNode + heuristicCost, newFrontierNode);
 
             _path[newFrontierNode.Id] = fromNode.Id;
             _nodeCost[newFrontierNode.Id] = costToNode;
@@ -105,7 +100,7 @@ namespace Pathfinding
                 return false;
             }
 
-            nodeToProcess = _frontierNodes.Pop();
+            nodeToProcess = _frontierNodes.Pop().Data;
             return true;
         }
 

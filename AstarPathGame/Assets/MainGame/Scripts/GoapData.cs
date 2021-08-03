@@ -3,69 +3,54 @@ using Pathfinding;
 
 namespace MainGame
 {
-    public class GoapData
+    public class GoapNode<T>
     {
-        public AgentState currentState;
+        public GoapNode<T> PreviousNode { get; set; }
+        public IAgentAction Action { get; set; }
+        public float NodeCost { get; set; }
+        public float HeuristicCost { get; set; }
+        public T NodeData { get; set; }
+        public bool IsVisited { get; set; }
 
-        public Dictionary<int, AgentState> Nodes { get; }
-        public IAgentAction[] Actions { get; }
-
-        public AgentState[] FrontierNodes => _frontierNodes._elements;
-
-        private SimpleMinHeap<AgentState> _frontierNodes;
-
-        private Dictionary<int, List<IAgentAction>> _nodeEdges;
-        private static readonly List<IAgentAction> _emptyEdgeList = new List<IAgentAction>();
-
-        public GoapData(IAgentAction[] agentActions)
+        public static GoapNode<T> New(T data, float cost, float heuristicCost, GoapNode<T> prev)
         {
-            Actions = agentActions;
-            currentState = AgentState.New();
-            Nodes = new Dictionary<int, AgentState>();
-            _frontierNodes = new SimpleMinHeap<AgentState>(1000);
-        }
-
-        public void SetState(AgentStateKey stateKey, int stateValue)
-        {
-            currentState.Set(stateKey, stateValue);
-        }
-
-        public void ResetForNewOriginNode(AgentState node)
-        {
-            Nodes.Clear();
-            //Nodes.Add(node.Id, node);
-        }
-
-        public bool AddAFrontierNode(
-            AgentState fromNode,
-            AgentState newFrontierNode,
-            IAgentAction withAction,
-            float costToNode, float heuristicCost)
-        {
-            // assign id if it's a new node
-            if (newFrontierNode.Id == -1)
+            return new GoapNode<T>
             {
-                newFrontierNode.Id = Nodes.Count;
-                Nodes.Add(newFrontierNode.Id, newFrontierNode);
-            }
-            else if (costToNode > Nodes[newFrontierNode.Id].NodeCost
-                || Nodes[newFrontierNode.Id].IsVisited)
-            {
-                return false;
-            }
+                NodeData = data,
+                NodeCost = cost,
+                HeuristicCost = heuristicCost,
+                PreviousNode = prev
+            };
+        }
+    }
 
-            Nodes[newFrontierNode.Id].Priority =
-                costToNode + heuristicCost;
-            Nodes[newFrontierNode.Id].ActionForThisNode = withAction;
-            Nodes[newFrontierNode.Id].HeuristicCost = heuristicCost;
-            Nodes[newFrontierNode.Id].NodeCost = costToNode;
-            Nodes[newFrontierNode.Id].PreviousNode = fromNode == null ? 0 : fromNode.Id;
+    public class GoapData<T>
+    {
+        private readonly SimpleMinHeap<GoapNode<T>> _frontierNodes;
 
-            _frontierNodes.Add(newFrontierNode);
+        private Dictionary<int, GoapNode<T>> _processedNodes;
+
+        public GoapData()
+        {
+            _frontierNodes = new SimpleMinHeap<GoapNode<T>>(1000);
+            _processedNodes = new Dictionary<int, GoapNode<T>>();
+        }
+
+        public bool AddAFrontierNode(GoapNode<T> newFrontierNode)
+        {
+            var nodePriority = newFrontierNode.NodeCost + newFrontierNode.HeuristicCost;
+            _frontierNodes.Add(nodePriority, newFrontierNode);
+
             return true;
         }
 
-        public bool TryGetNodeWithMinimumCost(out AgentState nodeToProcess)
+        public bool IsNodeVisited(T nodeData)
+        {
+            return _processedNodes.ContainsKey(nodeData.GetHashCode())
+                && _processedNodes[nodeData.GetHashCode()].IsVisited;
+        }
+
+        public bool TryGetNodeWithMinimumCost(out GoapNode<T> nodeToProcess)
         {
             if (_frontierNodes.IsEmpty())
             {
@@ -73,48 +58,32 @@ namespace MainGame
                 return false;
             }
 
-            nodeToProcess = _frontierNodes.Pop();
+            nodeToProcess = _frontierNodes.Pop().Data;
             return true;
         }
 
-        public List<IAgentAction> GetEdgesOriginatingFromNode(AgentState node)
-        {
-            List<IAgentAction> actions = new List<IAgentAction>();
-            foreach (var action in Actions)
-            {
-                if (action.CheckPreconditions(node))
-                {
-                    actions.Add(action);
-                }
-            }
-
-            return actions;
-        }
-
-        public List<IAgentAction> GetPathTo(int destinationId)
+        public List<IAgentAction> GetPathTo(GoapNode<T> destinationNode)
         {
             var path = new List<IAgentAction>();
 
-            var startingNodeId = destinationId;
-            var nextNodeInPathId = Nodes[destinationId].PreviousNode;
-            path.Insert(0, Nodes[destinationId].ActionForThisNode);
-
-            while (startingNodeId != nextNodeInPathId
-                && nextNodeInPathId != -1
-                && nextNodeInPathId != 0)
+            while (destinationNode?.Action != null)
             {
-                var edgeInPath = Nodes[nextNodeInPathId].ActionForThisNode;
-                path.Insert(0, edgeInPath);
-
-                startingNodeId = nextNodeInPathId;
-                nextNodeInPathId = Nodes[nextNodeInPathId].PreviousNode;
+                path.Insert(0, destinationNode.Action);
+                destinationNode = destinationNode.PreviousNode;
             }
 
             return path;
         }
 
-        public float GetNodeCostOf(AgentState node) => Nodes[node.Id].NodeCost;
+        public float GetNodeCostOf(GoapNode<T> node)
+        {
+            return node == null ? 0 : node.NodeCost;
+        }
 
-        public void SetNodeVisited(AgentState node) => Nodes[node.Id].IsVisited = true;
+        public void SetNodeVisited(GoapNode<T> node)
+        {
+            node.IsVisited = true;
+            _processedNodes.Add(node.NodeData.GetHashCode(), node);
+        }
     }
 }

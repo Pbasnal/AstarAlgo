@@ -8,13 +8,12 @@ namespace MainGame.Actions
         public override void Init()
         {
             preConditions = new State();
-            preConditions.Set(AgentStateKey.CanWalk, 1);
-            preConditions.Set(AgentStateKey.TargetInSight, 1);
-            preConditions.Set(AgentStateKey.TargetInRange, 1);
-            preConditions.Set(AgentStateKey.AgentOutOfSight, 0);
-
+            preConditions.Set(AgentStateKey.CanWalk
+                | AgentStateKey.TargetInSight
+                | AgentStateKey.TargetInRange);
+                
             effects = new State();
-            effects.Set(AgentStateKey.EnemyIsDead, 1);
+            effects.Set(AgentStateKey.EnemyIsDead);
             
             Weight = 1;
         }

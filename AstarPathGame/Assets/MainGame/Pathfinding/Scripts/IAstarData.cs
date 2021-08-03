@@ -9,7 +9,6 @@ namespace Pathfinding
         public TNode[] Nodes { get; }
         public TEdge[] Edges { get; }
 
-        public TNode[] FrontierNodes { get; }
         public float GetNodeCostOf(TNode node);
         public void SetNodeVisited(TNode node);
 
