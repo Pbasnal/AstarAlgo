@@ -9,7 +9,7 @@ namespace MainGame
 
         public Dictionary<InteractionType, HashSet<IInteractable>> interactables;
 
-        public AgentMemory()
+        private void Awake()
         {
             gameObjects = new Dictionary<string, GameObject>();
             interactables = new Dictionary<InteractionType, HashSet<IInteractable>>();

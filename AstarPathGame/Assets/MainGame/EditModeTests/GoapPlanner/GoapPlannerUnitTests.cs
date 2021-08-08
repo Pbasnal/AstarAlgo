@@ -20,7 +20,7 @@ namespace GoapPlannerTests
             gameObject.AddComponent<GoapAgent>();
             var goapAgent = gameObject.GetComponent<GoapAgent>();
 
-            foreach (var action in actions) action.Init(goapAgent);
+            //foreach (var action in actions) action.Init(goapAgent);
             
             var goapData = new GoapData<AgentState>();
             var planner = new GoapPlanner(goapData, actions);

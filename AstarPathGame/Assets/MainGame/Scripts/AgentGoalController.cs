@@ -10,7 +10,7 @@ namespace MainGame
         public AgentState EvaluateGoal(GoapAgent agent)
         {
             var currentState = agent.currentState;
-            if ((currentState.State.StateValue & AgentStateKey.IsNotHungry) == 0)
+            if ((currentState.StateValue & AgentStateKey.IsNotHungry) == 0)
             {
                 agent.SetTargetType(InteractionType.Consumable);
                 return EatFood;

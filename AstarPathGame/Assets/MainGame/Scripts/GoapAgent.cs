@@ -15,7 +15,7 @@ namespace MainGame
         public AgentState goalState;
         public AgentState currentState;
 
-        public AnAgentAction[] actionPath;
+        public List<AnAgentAction> actionPath;
         private int _currentActionToExecute = 0;
         private AgentMemory agentMemory;
         private GoapData<AgentState> _goapData;
@@ -63,10 +63,11 @@ namespace MainGame
                 _stateUpdated = false;
             }
 
-            if (_currentActionToExecute >= actionPath.Length)
+            if (_currentActionToExecute >= actionPath.Count)
             {
                 _stateUpdated = true;
                 goalState = null;
+                actionPath.Clear();
                 return;
             }
 
@@ -86,7 +87,7 @@ namespace MainGame
 
         public void UnSetState(AgentStateKey state)
         {
-            if ((currentState.State.StateValue & state) == 0) return;
+            if ((currentState.StateValue & state) == 0) return;
 
             currentState.UnSet(state);
             _stateUpdated = true;
@@ -123,25 +124,25 @@ namespace MainGame
             var newGoalState = _agentGoalController.EvaluateGoal(this);
             if (newGoalState == null) return;
 
-            if (goalState == null || newGoalState.State.StateValue != goalState.State.StateValue)
+            if (goalState == null || newGoalState.StateValue != goalState.StateValue)
             {
                 goalState = newGoalState.Clone();
-                actionPath = _planner.FindActionsTo(currentState, goalState).Select(a => (AnAgentAction)a).ToArray();
+                actionPath = _planner.FindActionsTo(currentState, goalState).Select(a => (AnAgentAction)a).ToList();
                 _currentActionToExecute = 0;
                 return;
             }
 
             var nextActionToExecute = _currentActionToExecute;
             //* validate all actions 
-            for (int i = _currentActionToExecute; i < actionPath.Length; i++)
+            for (int i = _currentActionToExecute; i < actionPath.Count; i++)
             {
-                if (actionPath[i].ValidateAction(this))
+                if (actionPath[i].ValidateAction(this.currentState))
                 {
                     nextActionToExecute = i;
                 }
             }
 
-            if (nextActionToExecute < actionPath.Length)
+            if (nextActionToExecute < actionPath.Count)
             {
                 _currentActionToExecute = nextActionToExecute;
             }

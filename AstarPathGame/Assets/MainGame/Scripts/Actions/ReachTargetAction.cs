@@ -31,25 +31,30 @@ namespace MainGame.Actions
 
         public override void Init(GoapAgent goapAgent)
         {
-            preConditions = new State();
-            preConditions.Set(AgentStateKey.CanWalk);
-
-            effects = new State();
-            effects.Set(AgentStateKey.TargetInSight
-                | AgentStateKey.TargetInRange);
-
-            Weight = 1;
-
+            base.Init(goapAgent);
+            
             agent = goapAgent;
             patrolBehaviour = agent.GetComponent<PatrolBehaviour>();
             moveToTarget = agent.GetComponent<MoveToTarget>();
         }
 
-        public override bool ValidateAction(GoapAgent agent)
+        public override bool ValidateAction(AgentState currentState)
         {
-            if (!CheckPreconditions(agent.currentState)) return false;
+            if (!base.ValidateAction(currentState)) return false;
 
             return agent.Find(agent.targetType) != null;
+        }
+
+        protected override AgentStateKey ApplyEffects(AgentStateKey currentState)
+        {
+            return currentState
+                | AgentStateKey.TargetInSight
+                | AgentStateKey.TargetInRange;
+        }
+
+        protected override AgentStateKey ApplyPreConditions(AgentStateKey currentState)
+        {
+            return currentState | AgentStateKey.CanWalk;
         }
     }
 }

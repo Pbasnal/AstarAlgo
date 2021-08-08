@@ -18,14 +18,14 @@ namespace MainGame
         public List<IAgentAction> FindActionsTo(AgentState currentState, AgentState destinationNode)
         {
             _goapData.Reset();
-            
+
             TryAddFrontierNode(null, currentState, destinationNode, null);
 
             GoapNode<AgentState> stateToCheck;
             while (_goapData.TryGetNodeWithMinimumCost(out stateToCheck))
             {
-                var stateValue = stateToCheck.NodeData.State.StateValue & destinationNode.State.StateValue;
-                if (stateValue == destinationNode.State.StateValue) break;
+                var stateValue = stateToCheck.NodeData.StateValue & destinationNode.StateValue;
+                if (stateValue == destinationNode.StateValue) break;
 
                 var actions = GetEdgesOriginatingFromNode(stateToCheck.NodeData);
                 foreach (var action in actions)
@@ -33,31 +33,34 @@ namespace MainGame
                     var newState = action.GetGeneratedState(stateToCheck.NodeData);
                     TryAddFrontierNode(stateToCheck, newState, destinationNode, action);
                 }
-
-                _goapData.SetNodeVisited(stateToCheck);
+                try
+                {
+                    _goapData.SetNodeVisited(stateToCheck);
+                }
+                catch (System.Exception up)
+                {
+                    Debug.Log($"Caught {up}");
+                    throw up;
+                }
             }
 
             return _goapData.GetPathTo(stateToCheck);
         }
 
         private float TryAddFrontierNode(GoapNode<AgentState> fromNode,
-            AgentState newNode, 
+            AgentState newNode,
             AgentState destinationNode,
             IAgentAction edge)
         {
-            if (newNode == null || 
-                _goapData.IsNodeVisited(newNode))
-            {
-                return 0;
-            }
-
             var heuristicCost = HeuristicCost(newNode, destinationNode);
             var edgeWeight = edge == null ? 0.0f : edge.Weight;
             var nodeCost = _goapData.GetNodeCostOf(fromNode) + edgeWeight;
 
+            if (!_goapData.ShouldAddNode(newNode, nodeCost + heuristicCost)) return 0;
+
             var newFrontierNode = GoapNode<AgentState>
                         .New(newNode, nodeCost, heuristicCost, fromNode);
-            
+
             newFrontierNode.Action = edge;
             _goapData.AddAFrontierNode(newFrontierNode);
 
@@ -66,8 +69,17 @@ namespace MainGame
 
         public float HeuristicCost(AgentState fromNode, AgentState toNode)
         {
-            var diff = toNode.AgentStateValue() - fromNode.AgentStateValue();
-            return diff * diff;
+            int XOR = toNode.AgentStateValue() ^ fromNode.AgentStateValue();
+            // Check for 1's in the binary form using
+            // Brian Kerninghan's Algorithm
+            int count = 0;
+            while (XOR > 0)
+            {
+                XOR &= (XOR - 1);
+                count++;
+            }
+            // return the count of different bits
+            return count;
         }
 
         public List<IAgentAction> GetEdgesOriginatingFromNode(AgentState node)
@@ -75,7 +87,7 @@ namespace MainGame
             var actions = new List<IAgentAction>();
             foreach (var action in _allActions)
             {
-                if (action.CheckPreconditions(node))
+                if (action.ValidateAction(node))
                 {
                     actions.Add(action);
                 }

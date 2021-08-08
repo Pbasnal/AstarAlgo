@@ -15,22 +15,17 @@ namespace MainGame.Actions
             throw new System.NotImplementedException();
         }
 
-        public override void Init(GoapAgent goapAgent)
+        protected override AgentStateKey ApplyEffects(AgentStateKey currentState)
         {
-            preConditions = new State();
-            preConditions.Set(AgentStateKey.CanWalk);
-
-            effects = new State();
-            effects.Set(AgentStateKey.AgentOutOfSight
-                | AgentStateKey.TargetOutOfRange 
-                | AgentStateKey.TargetOutOfSight);
-
-            Weight = 1;
+            return currentState 
+                | AgentStateKey.AgentOutOfSight
+                | AgentStateKey.TargetOutOfSight
+                | AgentStateKey.TargetOutOfRange;
         }
 
-        public override bool ValidateAction(GoapAgent agent)
+        protected override AgentStateKey ApplyPreConditions(AgentStateKey currentState)
         {
-            return CheckPreconditions(agent.currentState);
+            return currentState | AgentStateKey.CanWalk;
         }
     }
 }

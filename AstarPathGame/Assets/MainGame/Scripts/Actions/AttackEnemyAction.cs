@@ -10,22 +10,23 @@ namespace MainGame.Actions
             throw new System.NotImplementedException();
         }
 
-        public override void Init(GoapAgent goapAgent)
+        protected override AgentStateKey ApplyEffects(AgentStateKey currentState)
         {
-            preConditions = new State();
-            preConditions.Set(AgentStateKey.CanWalk
-                | AgentStateKey.TargetInSight
-                | AgentStateKey.TargetInRange);
-                
-            effects = new State();
-            effects.Set(AgentStateKey.EnemyIsDead);
-            
-            Weight = 1;
+            var state = currentState;
+            state |= AgentStateKey.EnemyIsDead;
+
+            return state;
         }
 
-        public override bool ValidateAction(GoapAgent agent)
+        protected override AgentStateKey ApplyPreConditions(AgentStateKey currentState)
         {
-            return CheckPreconditions(agent.currentState);
+            var state = currentState;
+
+            state |= AgentStateKey.CanWalk
+                | AgentStateKey.TargetInSight
+                | AgentStateKey.TargetInRange;
+            
+            return state;
         }
     }
 }

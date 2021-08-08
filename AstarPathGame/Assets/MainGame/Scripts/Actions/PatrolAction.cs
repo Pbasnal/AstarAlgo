@@ -15,28 +15,29 @@ namespace MainGame.Actions
             return false;
         }
 
+        protected override AgentStateKey ApplyEffects(AgentStateKey currentState)
+        {
+            return currentState 
+                | AgentStateKey.AreaExplored
+                | AgentStateKey.TargetInSight
+                | AgentStateKey.TargetInRange;
+        }
+
+        protected override AgentStateKey ApplyPreConditions(AgentStateKey currentState)
+        {
+            return currentState | AgentStateKey.CanWalk;
+        }
+
         public override void Init(GoapAgent goapAgent)
         {
-            preConditions = new State();
-            preConditions.Set(AgentStateKey.CanWalk);
-
-            effects = new State();
-            effects.Set(AgentStateKey.AreaExplored);
-            effects.Set(AgentStateKey.TargetInSight);
-
-            Weight = 1;
-
+            base.Init(goapAgent);
+            
             _patrolBehaviour = goapAgent.GetComponent<PatrolBehaviour>();
             if(_patrolBehaviour == null)
             {
                 var up = new UnityException("Add patrol behaviour to use in patrol action");;
                 throw up;
             }
-        }
-
-        public override bool ValidateAction(GoapAgent agent)
-        {
-            return CheckPreconditions(agent.currentState);
         }
     }
 }

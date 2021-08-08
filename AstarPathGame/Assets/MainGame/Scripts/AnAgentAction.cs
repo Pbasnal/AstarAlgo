@@ -7,25 +7,26 @@ namespace MainGame
     public interface IAgentAction
     {
         float Weight { get; set; }
-        bool CheckPreconditions(AgentState node);
-         AgentState GetGeneratedState(AgentState originNode);
+        bool ValidateAction(AgentState sate);
+        AgentState GetGeneratedState(AgentState originNode);
     }
 
     public abstract class AnAgentAction : ScriptableObject, IAgentAction
     {
         public float Weight { get; set; }
 
-        public State preConditions;
-        public State effects;
-        public virtual bool CheckPreconditions(AgentState currentState)
+        public AgentState preConditions;
+        public AgentState effects;
+        public virtual bool ValidateAction(AgentState currentState)
         {
-            var maskedState = currentState.State.StateValue & preConditions.StateValue;
-            if (maskedState != preConditions.StateValue) return false;
+            var currentStateValue = currentState.StateValue;
+            var stateWithPreConditions = ApplyPreConditions(currentStateValue);
+            if (stateWithPreConditions != currentStateValue) return false;
 
             //* No need to perfrom this action if all the effects are already
             //* present in the state.
-            maskedState = currentState.State.StateValue & effects.StateValue;
-            if (maskedState == effects.StateValue) return false;
+            var stateWithEffects = ApplyEffects(currentStateValue);
+            if (stateWithEffects == currentStateValue) return false;
 
             return true;
         }
@@ -33,15 +34,20 @@ namespace MainGame
         public virtual AgentState GetGeneratedState(AgentState originNode)
         {
             var agentState = originNode.Clone();
-            agentState.Set(effects.StateValue);
+            agentState.StateValue = ApplyEffects(agentState.StateValue);
             return agentState;
         }
 
-        public abstract void Init(GoapAgent goapAgent);
+        protected abstract AgentStateKey ApplyPreConditions(AgentStateKey currentState);
+
+        protected abstract AgentStateKey ApplyEffects(AgentStateKey currentState);
+
+        public virtual void Init(GoapAgent agent)
+        {
+            Weight = 1;
+        }
 
         public abstract bool Execute();
-
-        public abstract bool ValidateAction(GoapAgent agent);
     }
 }
 

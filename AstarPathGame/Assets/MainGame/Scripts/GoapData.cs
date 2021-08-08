@@ -52,8 +52,17 @@ namespace MainGame
 
         public bool IsNodeVisited(T nodeData)
         {
-            return _processedNodes.ContainsKey(nodeData.GetHashCode())
-                && _processedNodes[nodeData.GetHashCode()].IsVisited;
+            var nodeKey = nodeData.GetHashCode();
+            return _processedNodes.TryGetValue(nodeKey, out var node)
+                && node.IsVisited;
+        }
+
+        public bool ShouldAddNode(T nodeData, float priority)
+        {
+            var nodeKey = nodeData.GetHashCode();            
+            if(!_processedNodes.TryGetValue(nodeKey, out var node)) return true;
+
+            return priority < node.NodeCost + node.HeuristicCost;
         }
 
         public bool TryGetNodeWithMinimumCost(out GoapNode<T> nodeToProcess)
@@ -89,7 +98,14 @@ namespace MainGame
         public void SetNodeVisited(GoapNode<T> node)
         {
             node.IsVisited = true;
-            _processedNodes.Add(node.NodeData.GetHashCode(), node);
+            var nodeKey = node.NodeData.GetHashCode();
+            if(_processedNodes.ContainsKey(nodeKey)) 
+            {
+                _processedNodes[nodeKey] = node;
+                return;
+            }
+            
+            _processedNodes.Add(nodeKey, node);
         }
     }
 }

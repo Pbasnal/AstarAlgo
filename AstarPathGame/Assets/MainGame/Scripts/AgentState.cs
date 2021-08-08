@@ -10,30 +10,40 @@ namespace MainGame
     ]
     public class AgentState : ScriptableObject
     {
-        [SerializeField]
-        private State state;
-        public State State => state;
+        public AgentStateKey StateValue;
+        //public AgentStateKey StateValue => stateValue;
 
         public static AgentState New()
         {
-            var state = ScriptableObject.CreateInstance<AgentState>();
-            state.state = new State();
-
-            return state;
+            return ScriptableObject.CreateInstance<AgentState>();
         }
 
         public AgentState Clone()
         {
             var newState = AgentState.New();
             newState.name = this.name;
-            newState.State.Set(State.StateValue);
+            newState.Set(StateValue);
 
             return newState;
         }
 
-        public void Set(AgentStateKey stateKey) => State.Set(stateKey);
-        public void UnSet(AgentStateKey stateKey) => State.UnSet(stateKey);
+        public void Set(AgentStateKey stateKey) => StateValue |= stateKey;
 
-        public int AgentStateValue() => State.GetHashCode();
+        public void UnSet(AgentStateKey stateKey) => StateValue &= ~stateKey;
+
+        public int AgentStateValue() => GetHashCode();
+
+        public override bool Equals(System.Object obj)
+        {
+            if (!(obj is AgentState)) return false;
+
+            var p = (AgentState)obj;
+            return StateValue == p.StateValue;
+        }
+
+        public override int GetHashCode()
+        {
+            return (int)StateValue;
+        }
     }
 }
