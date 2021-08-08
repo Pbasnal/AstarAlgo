@@ -17,6 +17,8 @@ namespace MainGame
 
         public List<IAgentAction> FindActionsTo(AgentState currentState, AgentState destinationNode)
         {
+            _goapData.Reset();
+            
             TryAddFrontierNode(null, currentState, destinationNode, null);
 
             GoapNode<AgentState> stateToCheck;

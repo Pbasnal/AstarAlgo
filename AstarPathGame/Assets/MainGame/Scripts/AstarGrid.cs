@@ -7,21 +7,31 @@ namespace MainGame
     {
         public LayerMask unwalkableLayers;
         public Vector2Int gridSize;
+        private Vector2Int oldGridSize;
         public float nodeRadius;
         public bool drawGrid;
+        public float nodeDiameter => nodeRadius * 2;
 
         public Transform player;
         public Transform target;
 
         public Vector3 GridBottomLeft;
         private Node[] _grid;
-        private float _nodeDiameter => nodeRadius * 2;
 
         public IAstarData<Node, WeightedEdge> GridGraph { get; private set; }
-         
+
         private void Start()
         {
-            _grid = new Node[gridSize.x * gridSize.y];
+            LoadGrid();
+        }
+
+        public void LoadGrid()
+        {
+            if (_grid == null || gridSize != oldGridSize)
+            {
+                _grid = new Node[gridSize.x * gridSize.y];
+                oldGridSize = gridSize;
+            }
             GridBottomLeft = transform.position;
 
             var graphBuilder = A.GraphBuilder(_grid);
@@ -202,6 +212,10 @@ namespace MainGame
             return _grid[x * gridSize.y + y];
         }
 
+        public Node[] GetGrid()
+        {
+            return _grid;
+        }
         public void OnDrawGizmos()
         {
             if (!drawGrid)
@@ -213,30 +227,6 @@ namespace MainGame
 
             if (_grid == null) return;
             DrawGrid();
-
-            return;
-            var size = new Vector3(0.3f, 1.1f, 0.3f);
-
-            if (player == null) return;
-            MarkPlayerOnGrid(size);
-
-            if (target == null) return;
-            MarkPlayerTargetOnGrid(size);
-        }
-
-        private void MarkPlayerTargetOnGrid(Vector3 size)
-        {
-            var destination = NodeFromWorldPoint(target.position.x, target.position.z);
-            Gizmos.color = Color.red;
-            Gizmos.DrawCube(destination.worldPosition, size);
-        }
-
-        private void MarkPlayerOnGrid(Vector3 size)
-        {
-            var playerNode = NodeFromWorldPoint(player.position.x, player.position.z);
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(playerNode.worldPosition, Vector3.one * (_nodeDiameter - 0.3f));
-            Gizmos.DrawCube(player.position, size);
         }
 
         private void DrawGrid()
@@ -246,11 +236,11 @@ namespace MainGame
                 Gizmos.color = node.isWalkable ? Color.white : Color.red;
                 if (node.isWalkable)
                 {
-                    Gizmos.DrawWireCube(node.worldPosition, Vector3.one * (_nodeDiameter - 0.1f));
+                    Gizmos.DrawWireCube(node.worldPosition, Vector3.one * (nodeDiameter - 0.1f));
                 }
                 else
                 {
-                    Gizmos.DrawCube(node.worldPosition, Vector3.one * (_nodeDiameter - 0.1f));
+                    Gizmos.DrawCube(node.worldPosition, Vector3.one * (nodeDiameter - 0.1f));
                 }
             }
 

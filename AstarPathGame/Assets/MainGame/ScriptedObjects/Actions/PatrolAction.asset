@@ -9,8 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed9ce79c3249447b5b68c3d4d6110a9f, type: 3}
-  m_Name: StartingState
+  m_Script: {fileID: 11500000, guid: baf7305a865a54f72888fd27f02c8caa, type: 3}
+  m_Name: PatrolAction
   m_EditorClassIdentifier: 
-  state:
-    stateValue: 1370
+  preConditions:
+    stateValue: 0
+  effects:
+    stateValue: 0

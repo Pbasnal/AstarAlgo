@@ -25,12 +25,14 @@ namespace MainGame
         public AgentState Clone()
         {
             var newState = AgentState.New();
+            newState.name = this.name;
             newState.State.Set(State.StateValue);
 
             return newState;
         }
 
         public void Set(AgentStateKey stateKey) => State.Set(stateKey);
+        public void UnSet(AgentStateKey stateKey) => State.UnSet(stateKey);
 
         public int AgentStateValue() => State.GetHashCode();
     }

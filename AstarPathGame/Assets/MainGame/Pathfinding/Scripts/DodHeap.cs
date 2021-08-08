@@ -1,36 +1,35 @@
-﻿using System;
+using System;
 
 namespace Pathfinding
 {
-    public class SimpleHeapNode<T>
+    public struct DodHeapNode
     {
-        public float Priority { get; set; }
-        public T Data { get; set; }
-        private SimpleHeapNode(float priority, T data)
+        public float Priority;
+        public int DataIndex;
+        private DodHeapNode(float priority, int dataIndex)
         {
             Priority = priority;
-            Data = data;
+            DataIndex = dataIndex;
         }
 
-        public static SimpleHeapNode<T> New(float priority, T data)
+        public static DodHeapNode New(float priority, int dataIndex)
         {
-            return new SimpleHeapNode<T>(priority, data);
+            return new DodHeapNode(priority, dataIndex);
         }
     }
 
-    public class SimpleMinHeap<TNode>
+    public class DodMinHeap<TNode>
     {
-        public readonly SimpleHeapNode<TNode>[] _elements;
+        public readonly DodHeapNode[] _elements;
+        public TNode[] _data;
+
+        public int _dataIndex;
         public int _size;
 
-        public SimpleMinHeap(int size)
+        public DodMinHeap(int size)
         {
-            _elements = new SimpleHeapNode<TNode>[size];
-        }
-
-        public void Reset()
-        {
-            _size = 0;
+            _elements = new DodHeapNode[size];
+            _data = new TNode[size];
         }
 
         private int GetLeftChildIndex(int elementIndex) => 2 * elementIndex + 1;
@@ -41,9 +40,9 @@ namespace Pathfinding
         private bool HasRightChild(int elementIndex) => GetRightChildIndex(elementIndex) < _size;
         private bool IsRoot(int elementIndex) => elementIndex == 0;
 
-        private SimpleHeapNode<TNode> GetLeftChild(int elementIndex) => _elements[GetLeftChildIndex(elementIndex)];
-        private SimpleHeapNode<TNode> GetRightChild(int elementIndex) => _elements[GetRightChildIndex(elementIndex)];
-        private SimpleHeapNode<TNode> GetParent(int elementIndex) => _elements[GetParentIndex(elementIndex)];
+        private DodHeapNode GetLeftChild(int elementIndex) => _elements[GetLeftChildIndex(elementIndex)];
+        private DodHeapNode GetRightChild(int elementIndex) => _elements[GetRightChildIndex(elementIndex)];
+        private DodHeapNode GetParent(int elementIndex) => _elements[GetParentIndex(elementIndex)];
 
         private void Swap(int firstIndex, int secondIndex)
         {
@@ -57,13 +56,16 @@ namespace Pathfinding
             return _size == 0;
         }
 
-        public SimpleHeapNode<TNode> Peek()
+        public TNode Peek()
         {
-            return _size == 0 ?
-                throw new IndexOutOfRangeException() : _elements[0];
+            if (_size == 0)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            return _data[_elements[0].DataIndex];
         }
 
-        public SimpleHeapNode<TNode> Pop()
+        public TNode Pop()
         {
             if (_size == 0)
                 throw new IndexOutOfRangeException();
@@ -72,17 +74,21 @@ namespace Pathfinding
             _elements[0] = _elements[_size - 1];
             _size--;
             ReCalculateDown(0);
-            return result;
+
+            return _data[result.DataIndex];
         }
 
         public bool Add(float priority, TNode element)
         {
             if (_size == _elements.Length)
                 return false;
-            _elements[_size] = SimpleHeapNode<TNode>.New(priority, element);
+            _data[_dataIndex] = element;
+            _elements[_size] = DodHeapNode.New(priority, _dataIndex);
 
             ReCalculateUp(_size);
             _size++;
+            _dataIndex++;
+
             return true;
         }
 

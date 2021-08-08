@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
 using Pathfinding;
@@ -56,7 +57,7 @@ namespace PathfindingTests
 
             var tmp2 = tmp.Select(t => t.Priority).ToArray();
 
-            Debug.Log($"Total tested values {tmp2.Length}");
+            UnityEngine.Debug.Log($"Total tested values {tmp2.Length}");
         }
 
         [Test]
@@ -77,5 +78,40 @@ namespace PathfindingTests
             pQueue.Add(node);
             Assert.AreEqual(10, pQueue.Peek().Id);
         }
+
+        [Test]
+        public void SimpleMinHeap_node_test()
+        {
+            var size = 100000;
+            var pQueue = new DodMinHeap<DodNode>(size);
+            var random = new System.Random();
+            var nodes = new DodNode[size];
+            for (int i = 0; i < size; i++)
+            {
+                nodes[i] = new DodNode { val = i };
+            }
+
+            var timer = Stopwatch.StartNew();
+            for (int i = 0; i < size; i++)
+            {
+                pQueue.Add(random.Next(size + 100), nodes[i]);
+            }
+            UnityEngine.Debug.Log($"Time to add all elements {timer.ElapsedMilliseconds}ms");
+            while (!pQueue.IsEmpty())
+            {
+                pQueue.Pop();
+            }
+            UnityEngine.Debug.Log($"Time to pop all elements {timer.ElapsedMilliseconds}ms");
+        }
+
+        private class DodNode
+        {
+            public int val;
+        }
+        // for 10000 elements
+        // without changes 20ms
+        // with struct 15ms
+        // without any data 10ms
+        // with heapnode containing dataindex 10ms
     }
 }

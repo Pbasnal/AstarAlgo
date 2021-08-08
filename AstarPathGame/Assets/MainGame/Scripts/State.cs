@@ -16,7 +16,9 @@ namespace MainGame
         CanWalk = 64,
         CanNotWalk = 128,
         EnemyIsAlive = 256,
-        EnemyIsDead = 512
+        EnemyIsDead = 512,
+        IsNotHungry = 1024,
+        AreaExplored = 2048
     }
 
     [Serializable]
@@ -27,7 +29,8 @@ namespace MainGame
         public AgentStateKey StateValue => stateValue;
 
         public void Set(AgentStateKey stateKey) => stateValue |= stateKey;
-        //public void UnSet(AgentStateKey stateKey) => stateValue &= ~stateKey;
+        
+        public void UnSet(AgentStateKey stateKey) => stateValue &= ~stateKey;
 
         public override bool Equals(System.Object obj)
         {

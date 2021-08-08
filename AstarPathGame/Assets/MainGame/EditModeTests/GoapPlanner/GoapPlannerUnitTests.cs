@@ -15,7 +15,12 @@ namespace GoapPlannerTests
             var actions = GetAllAgentActions().ToArray();
             Assert.IsTrue(actions != null && actions.Count() > 0);
 
-            foreach (var action in actions) action.Init();
+            var gameObject = new GameObject();
+            gameObject.AddComponent<PatrolBehaviour>();
+            gameObject.AddComponent<GoapAgent>();
+            var goapAgent = gameObject.GetComponent<GoapAgent>();
+
+            foreach (var action in actions) action.Init(goapAgent);
             
             var goapData = new GoapData<AgentState>();
             var planner = new GoapPlanner(goapData, actions);

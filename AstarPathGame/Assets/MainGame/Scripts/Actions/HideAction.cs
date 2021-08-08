@@ -10,7 +10,12 @@ namespace MainGame.Actions
     ]
     public class HideAction : AnAgentAction
     {
-        public override void Init()
+        public override bool Execute()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void Init(GoapAgent goapAgent)
         {
             preConditions = new State();
             preConditions.Set(AgentStateKey.CanWalk);
@@ -21,6 +26,11 @@ namespace MainGame.Actions
                 | AgentStateKey.TargetOutOfSight);
 
             Weight = 1;
+        }
+
+        public override bool ValidateAction(GoapAgent agent)
+        {
+            return CheckPreconditions(agent.currentState);
         }
     }
 }

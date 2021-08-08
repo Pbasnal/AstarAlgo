@@ -36,6 +36,12 @@ namespace MainGame
             _processedNodes = new Dictionary<int, GoapNode<T>>();
         }
 
+        public void Reset()
+        {
+            _processedNodes.Clear();
+            _frontierNodes.Reset();
+        }
+
         public bool AddAFrontierNode(GoapNode<T> newFrontierNode)
         {
             var nodePriority = newFrontierNode.NodeCost + newFrontierNode.HeuristicCost;
