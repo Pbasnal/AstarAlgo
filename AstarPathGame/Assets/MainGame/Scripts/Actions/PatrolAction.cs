@@ -28,9 +28,9 @@ namespace MainGame.Actions
             return currentState | AgentStateKey.CanWalk;
         }
 
-        public override void Init(GoapAgent goapAgent)
+        public override void OnStart(GoapAgent goapAgent)
         {
-            base.Init(goapAgent);
+            base.OnStart(goapAgent);
             
             _patrolBehaviour = goapAgent.GetComponent<PatrolBehaviour>();
             if(_patrolBehaviour == null)

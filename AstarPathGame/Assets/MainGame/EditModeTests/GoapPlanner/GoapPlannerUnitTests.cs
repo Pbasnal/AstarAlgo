@@ -23,9 +23,9 @@ namespace GoapPlannerTests
             //foreach (var action in actions) action.Init(goapAgent);
             
             var goapData = new GoapData<AgentState>();
-            var planner = new GoapPlanner(goapData, actions);
+            var planner = new GoapPlanner<AgentState>(goapData, actions);
 
-            var currentState = AgentState.New();
+            var currentState = AgentState.New(goapAgent.OnStateChange);
             currentState.Set(AgentStateKey.CanWalk);
 
             var destinationNode = currentState.Clone();

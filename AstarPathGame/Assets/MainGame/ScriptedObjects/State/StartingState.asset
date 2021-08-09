@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed9ce79c3249447b5b68c3d4d6110a9f, type: 3}
   m_Name: StartingState
   m_EditorClassIdentifier: 
-  state:
-    stateValue: 1370
+  StateValue: 64

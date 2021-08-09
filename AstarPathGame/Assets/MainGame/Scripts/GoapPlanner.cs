@@ -3,29 +3,30 @@ using UnityEngine;
 
 namespace MainGame
 {
-    public class GoapPlanner
+    public class GoapPlanner<TAgentState> 
+        where TAgentState: IAgentState<TAgentState>
     {
-        private IAgentAction[] _allActions;
-        public List<IAgentAction> computedPath;
-        private GoapData<AgentState> _goapData;
+        private IAgentAction<TAgentState>[] _allActions;
+        public List<IAgentAction<TAgentState>> computedPath;
+        private GoapData<TAgentState> _goapData;
 
-        public GoapPlanner(GoapData<AgentState> goapData, IAgentAction[] allActions)
+        public GoapPlanner(GoapData<TAgentState> goapData, 
+            IAgentAction<TAgentState>[] allActions)
         {
             _allActions = allActions;
             _goapData = goapData;
         }
 
-        public List<IAgentAction> FindActionsTo(AgentState currentState, AgentState destinationNode)
+        public List<IAgentAction<TAgentState>> FindActionsTo(TAgentState currentState, 
+            TAgentState destinationNode)
         {
             _goapData.Reset();
-
             TryAddFrontierNode(null, currentState, destinationNode, null);
 
-            GoapNode<AgentState> stateToCheck;
+            GoapNode<TAgentState> stateToCheck;
             while (_goapData.TryGetNodeWithMinimumCost(out stateToCheck))
             {
-                var stateValue = stateToCheck.NodeData.StateValue & destinationNode.StateValue;
-                if (stateValue == destinationNode.StateValue) break;
+                if (stateToCheck.NodeData.Contains(destinationNode)) break;
 
                 var actions = GetEdgesOriginatingFromNode(stateToCheck.NodeData);
                 foreach (var action in actions)
@@ -47,18 +48,18 @@ namespace MainGame
             return _goapData.GetPathTo(stateToCheck);
         }
 
-        private float TryAddFrontierNode(GoapNode<AgentState> fromNode,
-            AgentState newNode,
-            AgentState destinationNode,
-            IAgentAction edge)
+        private float TryAddFrontierNode(GoapNode<TAgentState> fromNode,
+            TAgentState newNode,
+            TAgentState destinationNode,
+            IAgentAction<TAgentState> edge)
         {
-            var heuristicCost = HeuristicCost(newNode, destinationNode);
+            var heuristicCost = newNode.DistanceFrom(destinationNode);
             var edgeWeight = edge == null ? 0.0f : edge.Weight;
             var nodeCost = _goapData.GetNodeCostOf(fromNode) + edgeWeight;
 
             if (!_goapData.ShouldAddNode(newNode, nodeCost + heuristicCost)) return 0;
 
-            var newFrontierNode = GoapNode<AgentState>
+            var newFrontierNode = GoapNode<TAgentState>
                         .New(newNode, nodeCost, heuristicCost, fromNode);
 
             newFrontierNode.Action = edge;
@@ -67,24 +68,9 @@ namespace MainGame
             return heuristicCost;
         }
 
-        public float HeuristicCost(AgentState fromNode, AgentState toNode)
+        public List<IAgentAction<TAgentState>> GetEdgesOriginatingFromNode(TAgentState node)
         {
-            int XOR = toNode.AgentStateValue() ^ fromNode.AgentStateValue();
-            // Check for 1's in the binary form using
-            // Brian Kerninghan's Algorithm
-            int count = 0;
-            while (XOR > 0)
-            {
-                XOR &= (XOR - 1);
-                count++;
-            }
-            // return the count of different bits
-            return count;
-        }
-
-        public List<IAgentAction> GetEdgesOriginatingFromNode(AgentState node)
-        {
-            var actions = new List<IAgentAction>();
+            var actions = new List<IAgentAction<TAgentState>>();
             foreach (var action in _allActions)
             {
                 if (action.ValidateAction(node))

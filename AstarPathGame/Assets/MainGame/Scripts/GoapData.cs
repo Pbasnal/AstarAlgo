@@ -3,10 +3,10 @@ using Pathfinding;
 
 namespace MainGame
 {
-    public class GoapNode<T>
+    public class GoapNode<T> where T : IAgentState<T>
     {
         public GoapNode<T> PreviousNode { get; set; }
-        public IAgentAction Action { get; set; }
+        public IAgentAction<T> Action { get; set; }
         public float NodeCost { get; set; }
         public float HeuristicCost { get; set; }
         public T NodeData { get; set; }
@@ -24,7 +24,7 @@ namespace MainGame
         }
     }
 
-    public class GoapData<T>
+    public class GoapData<T> where T: IAgentState<T>
     {
         private readonly SimpleMinHeap<GoapNode<T>> _frontierNodes;
 
@@ -77,9 +77,9 @@ namespace MainGame
             return true;
         }
 
-        public List<IAgentAction> GetPathTo(GoapNode<T> destinationNode)
+        public List<IAgentAction<T>> GetPathTo(GoapNode<T> destinationNode)
         {
-            var path = new List<IAgentAction>();
+            var path = new List<IAgentAction<T>>();
 
             while (destinationNode?.Action != null)
             {

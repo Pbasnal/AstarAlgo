@@ -20,29 +20,4 @@ namespace MainGame
         IsNotHungry = 1024,
         AreaExplored = 2048
     }
-
-    // [Serializable]
-    // public class State
-    // {
-    //     [SerializeField]
-    //     private AgentStateKey stateValue;
-    //     public AgentStateKey StateValue => stateValue;
-
-    //     public void Set(AgentStateKey stateKey) => stateValue |= stateKey;
-        
-    //     public void UnSet(AgentStateKey stateKey) => stateValue &= ~stateKey;
-
-    //     public override bool Equals(System.Object obj)
-    //     {
-    //         if (!(obj is State)) return false;
-
-    //         State p = (State)obj;
-    //         return StateValue == p.StateValue;
-    //     }
-
-    //     public override int GetHashCode()
-    //     {
-    //         return (int)StateValue;
-    //     }
-    // }
 }

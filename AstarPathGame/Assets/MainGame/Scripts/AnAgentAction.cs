@@ -4,14 +4,21 @@ using System;
 
 namespace MainGame
 {
-    public interface IAgentAction
+    public interface IAgentAction<TAgentState> 
+        where TAgentState : IAgentState<TAgentState>
     {
         float Weight { get; set; }
-        bool ValidateAction(AgentState sate);
-        AgentState GetGeneratedState(AgentState originNode);
+        bool ValidateAction(TAgentState currentSate);
+        TAgentState GetGeneratedState(TAgentState currentState);
+        void OnStart(AGoapAgent<TAgentState> goapAgent);
+        void OnUpdate(AGoapAgent<TAgentState> goapAgent);
+        void OnEnter(AGoapAgent<TAgentState> goapAgent);
+        void OnExit(AGoapAgent<TAgentState> goapAgent);
+        bool Execute();
     }
 
-    public abstract class AnAgentAction : ScriptableObject, IAgentAction
+    public abstract class AnAgentAction 
+        : ScriptableObject, IAgentAction<AgentState>
     {
         public float Weight { get; set; }
 
@@ -42,12 +49,32 @@ namespace MainGame
 
         protected abstract AgentStateKey ApplyEffects(AgentStateKey currentState);
 
-        public virtual void Init(GoapAgent agent)
+        public virtual void OnStart(GoapAgent agent)
         {
             Weight = 1;
         }
 
         public abstract bool Execute();
+
+        public void OnStart(AGoapAgent<AgentState> goapAgent)
+        {
+            
+        }
+
+        public void OnUpdate(AGoapAgent<AgentState> goapAgent)
+        {
+            
+        }
+
+        public void OnEnter(AGoapAgent<AgentState> goapAgent)
+        {
+            
+        }
+
+        public void OnExit(AGoapAgent<AgentState> goapAgent)
+        {
+            
+        }
     }
 }
 

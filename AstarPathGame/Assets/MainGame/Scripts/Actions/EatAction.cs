@@ -10,7 +10,7 @@ namespace MainGame.Actions
         private AgentMemory _agentMemory;
         private GoapAgent _agent;
 
-        public override void Init(GoapAgent goapAgent)
+        public override void OnStart(GoapAgent goapAgent)
         {
             Weight = 1;
 

@@ -11,8 +11,7 @@ namespace MainGame.Actions
 
         public override bool Execute()
         {
-            var target = agent.Find(agent.targetType);
-
+            var target = agent.GetTarget();
             if (target == null)
             {
                 patrolBehaviour.Behave();
@@ -29,9 +28,9 @@ namespace MainGame.Actions
             return false;
         }
 
-        public override void Init(GoapAgent goapAgent)
+        public override void OnStart(GoapAgent goapAgent)
         {
-            base.Init(goapAgent);
+            base.OnStart(goapAgent);
             
             agent = goapAgent;
             patrolBehaviour = agent.GetComponent<PatrolBehaviour>();
@@ -42,7 +41,7 @@ namespace MainGame.Actions
         {
             if (!base.ValidateAction(currentState)) return false;
 
-            return agent.Find(agent.targetType) != null;
+            return agent.GetTarget() != null;
         }
 
         protected override AgentStateKey ApplyEffects(AgentStateKey currentState)
