@@ -1,21 +1,16 @@
 using UnityEngine;
-
+using GoapFramework;
 namespace MainGame
 {
-    public interface IAgentGoalProvider<TAgentState>
-        where TAgentState: IAgentState<TAgentState>
-    {
-        TAgentState EvaluateGoal(AGoapAgent<TAgentState> agent);
-    }
-
-    public class AgentGoalProvider : MonoBehaviour, IAgentGoalProvider<AgentState>
+    // implementation | not framework
+    public class AgentGoalProvider : MonoBehaviour, IAgentGoalProvider
     {
         public AgentState Patrol;
         public AgentState EatFood;
 
-        public AgentState EvaluateGoal(AGoapAgent<AgentState> agent)
+        public IAgentState EvaluateGoal(IGoapAgent agent)
         {
-            var currentState = agent.currentState;
+            var currentState = agent.GetCurrentState();
             if (!currentState.Contains(EatFood))
             {
                 agent.SetTargetType(InteractionType.Consumable);

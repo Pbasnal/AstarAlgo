@@ -2,28 +2,26 @@ using System.Collections.Generic;
 using System.Linq;
 using MainGame.Sensors;
 using UnityEngine;
-
+using GoapFramework;
 namespace MainGame
 {
-    [RequireComponent(typeof(AgentMemory))]
-    public abstract class AGoapAgent<TAgentState> : MonoBehaviour
-        where TAgentState : IAgentState<TAgentState>
+    public abstract class AGoapAgent<TAgentAction> : MonoBehaviour, IGoapAgent
+        where TAgentAction : IAgentAction
     {
-        public IAgentAction<TAgentState>[] agentActions;
+        // Properties to be set via inspector
+        public TAgentAction[] agentActions;
 
-        protected TAgentState goalState;
-        public TAgentState currentState;
-        public List<IAgentAction<TAgentState>> actionPath;
+        protected IAgentState goalState;
+        public IAgentState currentState;
+        public List<TAgentAction> actionPath;
 
-        protected GoapData<TAgentState> _goapData;
+        protected GoapData _goapData;
 
         protected int _currentActionToExecute = 0;
         protected AgentMemory agentMemory;
-        protected IAgentGoalProvider<TAgentState> _agentGoalProvider;
-        protected GoapPlanner<TAgentState> _planner;
-
+        protected IAgentGoalProvider _agentGoalProvider;
+        protected GoapPlanner _planner;
         protected bool _stateUpdated = false;
-
         protected InteractionType targetType;
 
         [Space]
@@ -36,21 +34,22 @@ namespace MainGame
             {
                 throw new UnityException($"Assign actions to the agent {name}");
             }
-
-            currentState = currentState.Clone(OnStateChange);
-            _goapData = new GoapData<TAgentState>();
-            _planner = new GoapPlanner<TAgentState>(_goapData, agentActions);
+            //_mirrorOfAgentActions = new TAgentAction[agentActions.Length];
+            var state = ScriptableObject.CreateInstance<AgentState>();
+            state.Set(AgentStateKey.CanWalk);//currentState.Clone(OnStateChange);
+            currentState = state;
         }
 
         private void Start()
         {
-            foreach (var action in agentActions)
+            for (int i = 0; i < agentActions.Length; i++)
             {
-                action.OnStart(this);
+                agentActions[i].OnStart(this);
             }
+            _goapData = new GoapData();
+            _planner = new GoapPlanner(_goapData, agentActions.Select(a => (IAgentAction) a).ToArray());
             agentMemory = GetComponent<AgentMemory>();
-
-            _agentGoalProvider = GetComponent<IAgentGoalProvider<TAgentState>>();
+            _agentGoalProvider = GetComponent<IAgentGoalProvider>();
         }
 
         private void Update()
@@ -74,8 +73,27 @@ namespace MainGame
                 _currentActionToExecute += 1;
             }
         }
+        public void SetState(IAgentState state)
+        {
+            currentState.AddState(state);
+        }
 
-        public void OnStateChange(TAgentState state)
+        public void UnSetState(IAgentState state)
+        {
+            currentState.RemoveState(state);
+        }
+
+        public IAgentState GetCurrentState()
+        {
+            return currentState;
+        }
+
+        public TAgentAction[] GetAllActions()
+        {
+            return agentActions;
+        }
+
+        public void OnStateChange(IAgentState state)
         {
             if (currentState.Equals(state)) return;
             _stateUpdated = true;
@@ -121,7 +139,7 @@ namespace MainGame
             if (goalState == null || !newGoalState.Equals(goalState))
             {
                 goalState = newGoalState.Clone();
-                actionPath = _planner.FindActionsTo(currentState, goalState);
+                actionPath = _planner.FindActionsTo(currentState, goalState).Select(a => (TAgentAction)a).ToList();
                 _currentActionToExecute = 0;
                 return;
             }

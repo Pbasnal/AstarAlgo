@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using GoapFramework;
 
 namespace MainGame.Actions
 {
     [CreateAssetMenu(fileName = "ReachTargetAction", menuName = "GoapActions/ReachTargetAction", order = 52)]
-    public class ReachTargetAction : AnAgentAction
+    public class ReachTargetAction : AnActionWithAgentState
     {
         private GoapAgent agent;
         private PatrolBehaviour patrolBehaviour;
@@ -21,23 +22,24 @@ namespace MainGame.Actions
             moveToTarget.Move(target.Position);
             if (Vector3.Distance(target.Position, agent.transform.position) <= 3f)
             {
-                agent.SetState(AgentStateKey.TargetInSight | AgentStateKey.TargetInRange);
+                var currentState = (AgentState)agent.GetCurrentState();
+                currentState.StateValue = ApplyEffects(currentState.StateValue);
                 return true;
             }
 
             return false;
         }
 
-        public override void OnStart(GoapAgent goapAgent)
+        public override void OnStart(IGoapAgent goapAgent)
         {
             base.OnStart(goapAgent);
-            
-            agent = goapAgent;
+
+            agent = goapAgent as GoapAgent;
             patrolBehaviour = agent.GetComponent<PatrolBehaviour>();
             moveToTarget = agent.GetComponent<MoveToTarget>();
         }
 
-        public override bool ValidateAction(AgentState currentState)
+        public override bool ValidateAction(IAgentState currentState)
         {
             if (!base.ValidateAction(currentState)) return false;
 
@@ -46,8 +48,7 @@ namespace MainGame.Actions
 
         protected override AgentStateKey ApplyEffects(AgentStateKey currentState)
         {
-            return currentState
-                | AgentStateKey.TargetInSight
+            return currentState | AgentStateKey.TargetInSight
                 | AgentStateKey.TargetInRange;
         }
 

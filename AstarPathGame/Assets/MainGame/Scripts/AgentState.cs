@@ -1,53 +1,38 @@
 using System;
 using UnityEngine;
+using GoapFramework;
 
 namespace MainGame
 {
-    public interface IAgentState<TAgentState>
-        where TAgentState : IAgentState<TAgentState>
-    {
-        TAgentState Clone(Action<TAgentState> onStateChangeCallback = null);
-        int AgentStateValue();
-        float DistanceFrom(TAgentState state);
-        TAgentState IntersectState(TAgentState state);
-        void OnStateChange(TAgentState state);
-
-        bool Contains(TAgentState state);
-    }
 
     [CreateAssetMenu(fileName = "AgentState", menuName = "Goap/AgentState", order = 52)]
-    public class AgentState : ScriptableObject, IAgentState<AgentState>
+    public class AgentState : ScriptableObject, IAgentState, IAgentStateFactory<AgentState>
     {
         public AgentStateKey StateValue;
-        private Action<AgentState> onStateChange;
+        private Action<IAgentState> onStateChange;
 
-        public static AgentState New(Action<AgentState> stateChangeCallback)
+        public static AgentState NewState(Action<IAgentState> stateChangeCallback)
         {
             var newAgentState = ScriptableObject.CreateInstance<AgentState>();
-            newAgentState.onStateChange += stateChangeCallback;
-
+            if (stateChangeCallback != null)
+            {
+                newAgentState.onStateChange += stateChangeCallback;
+            }
             return newAgentState;
         }
 
-        public AgentState Clone(Action<AgentState> onStateChangeCallback = null)
+        public AgentState New(Action<IAgentState> stateChangeCallback)
         {
-            var newState = AgentState.New(onStateChangeCallback ?? this.onStateChange);
+            return NewState(stateChangeCallback);
+        }
+
+        public IAgentState Clone(Action<IAgentState> onStateChangeCallback = null)
+        {
+            var newState = New(onStateChangeCallback ?? this.onStateChange);
             newState.name = this.name;
-            newState.Set(StateValue);
+            newState.AddState(this);
 
             return newState;
-        }
-
-        public void Set(AgentStateKey stateKey)
-        {
-            StateValue |= stateKey;
-            OnStateChange(this);
-        }
-
-        public void UnSet(AgentStateKey stateKey)
-        {
-            StateValue &= ~stateKey;
-            OnStateChange(this);
         }
 
         public int AgentStateValue() => GetHashCode();
@@ -60,8 +45,11 @@ namespace MainGame
             return StateValue == p.StateValue;
         }
 
-        public bool Contains(AgentState state)
+        public bool Contains(IAgentState inputState)
         {
+            var state = inputState as AgentState;
+            if (state == null) return false;
+
             return (StateValue & state.StateValue) == state.StateValue;
         }
 
@@ -70,16 +58,49 @@ namespace MainGame
             return (int)StateValue;
         }
 
-        public AgentState IntersectState(AgentState state)
+        public IAgentState IntersectState(IAgentState inputState)
         {
-            var stateIntersection = Clone();
+            var state = inputState as AgentState;
+            if (state == null) return null;
+
+            var stateIntersection = Clone() as AgentState;
             stateIntersection.StateValue &= state.StateValue;
 
             return stateIntersection;
         }
 
-        public float DistanceFrom(AgentState state)
+        public void AddState(IAgentState stateInfoToUpdateWith)
         {
+            var state = stateInfoToUpdateWith as AgentState;
+            if (state == null) return;
+
+            Set(state.StateValue);
+        }
+
+        public void RemoveState(IAgentState stateInfoToUpdateWith)
+        {
+            var state = stateInfoToUpdateWith as AgentState;
+            if (state == null) return;
+            UnSet(state.StateValue);
+        }
+
+        public void Set(AgentStateKey stateToAdd)
+        {
+            StateValue |= stateToAdd;
+            OnStateChange(this);
+        }
+
+        public void UnSet(AgentStateKey stateToRemove)
+        {
+            StateValue &= ~stateToRemove;
+            OnStateChange(this);
+        }
+
+        public float DistanceFrom(IAgentState inputState)
+        {
+            var state = inputState as AgentState;
+            if (state == null) return float.MaxValue;
+
             int XOR = (int)StateValue ^ (int)state.StateValue;
             // Check for 1's in the binary form using
             // Brian Kerninghan's Algorithm
@@ -93,7 +114,7 @@ namespace MainGame
             return count;
         }
 
-        public void OnStateChange(AgentState state)
+        public void OnStateChange(IAgentState state)
         {
             onStateChange?.Invoke(state);
         }

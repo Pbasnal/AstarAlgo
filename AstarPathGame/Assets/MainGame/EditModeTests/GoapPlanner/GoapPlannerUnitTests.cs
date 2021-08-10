@@ -4,6 +4,7 @@ using System.Linq;
 using MainGame;
 using NUnit.Framework;
 using UnityEngine;
+using GoapFramework;
 
 namespace GoapPlannerTests
 {
@@ -20,15 +21,13 @@ namespace GoapPlannerTests
             gameObject.AddComponent<GoapAgent>();
             var goapAgent = gameObject.GetComponent<GoapAgent>();
 
-            //foreach (var action in actions) action.Init(goapAgent);
-            
-            var goapData = new GoapData<AgentState>();
-            var planner = new GoapPlanner<AgentState>(goapData, actions);
+            var goapData = new GoapData();
+            var planner = new GoapPlanner(goapData, actions);
 
-            var currentState = AgentState.New(goapAgent.OnStateChange);
+            var currentState = ScriptableObject.CreateInstance<AgentState>();
             currentState.Set(AgentStateKey.CanWalk);
 
-            var destinationNode = currentState.Clone();
+            var destinationNode = (AgentState)currentState.Clone();
             destinationNode.Set(AgentStateKey.EnemyIsDead);
 
             var actionPath = planner.FindActionsTo(currentState, destinationNode);
@@ -41,12 +40,12 @@ namespace GoapPlannerTests
             }
         }
 
-        private IEnumerable<AnAgentAction> GetAllAgentActions()
+        private IEnumerable<AnActionWithAgentState> GetAllAgentActions()
         {
-            return System.Reflection.Assembly.GetAssembly(typeof(AnAgentAction))
+            return System.Reflection.Assembly.GetAssembly(typeof(AnActionWithAgentState))
                 .GetTypes()
-                .Where(type => typeof(AnAgentAction).IsAssignableFrom(type) && type.IsClass && !type.IsAbstract)
-                .Select(type => (AnAgentAction)Activator.CreateInstance(type));
+                .Where(type => typeof(AnActionWithAgentState).IsAssignableFrom(type) && type.IsClass && !type.IsAbstract)
+                .Select(type => (AnActionWithAgentState)Activator.CreateInstance(type));
         }
     }
 }

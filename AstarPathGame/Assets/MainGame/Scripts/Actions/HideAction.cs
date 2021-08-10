@@ -8,7 +8,7 @@ namespace MainGame.Actions
             menuName = "GoapActions/HideAction",
             order = 52)
     ]
-    public class HideAction : AnAgentAction
+    public class HideAction : AnActionWithAgentState
     {
         public override bool Execute()
         {

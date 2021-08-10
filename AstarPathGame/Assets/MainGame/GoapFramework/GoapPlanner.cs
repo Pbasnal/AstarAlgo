@@ -1,29 +1,26 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
-namespace MainGame
+namespace GoapFramework
 {
-    public class GoapPlanner<TAgentState> 
-        where TAgentState: IAgentState<TAgentState>
+    public class GoapPlanner
     {
-        private IAgentAction<TAgentState>[] _allActions;
-        public List<IAgentAction<TAgentState>> computedPath;
-        private GoapData<TAgentState> _goapData;
+        private IAgentAction[] _allActions;
+        public List<IAgentAction> computedPath;
+        private GoapData _goapData;
 
-        public GoapPlanner(GoapData<TAgentState> goapData, 
-            IAgentAction<TAgentState>[] allActions)
+        public GoapPlanner(GoapData goapData, IAgentAction[] allActions)
         {
             _allActions = allActions;
             _goapData = goapData;
         }
 
-        public List<IAgentAction<TAgentState>> FindActionsTo(TAgentState currentState, 
-            TAgentState destinationNode)
+        public List<IAgentAction> FindActionsTo(IAgentState currentState,
+            IAgentState destinationNode)
         {
             _goapData.Reset();
             TryAddFrontierNode(null, currentState, destinationNode, null);
 
-            GoapNode<TAgentState> stateToCheck;
+            GoapNode stateToCheck;
             while (_goapData.TryGetNodeWithMinimumCost(out stateToCheck))
             {
                 if (stateToCheck.NodeData.Contains(destinationNode)) break;
@@ -34,24 +31,16 @@ namespace MainGame
                     var newState = action.GetGeneratedState(stateToCheck.NodeData);
                     TryAddFrontierNode(stateToCheck, newState, destinationNode, action);
                 }
-                try
-                {
-                    _goapData.SetNodeVisited(stateToCheck);
-                }
-                catch (System.Exception up)
-                {
-                    Debug.Log($"Caught {up}");
-                    throw up;
-                }
+                _goapData.SetNodeVisited(stateToCheck);
             }
 
             return _goapData.GetPathTo(stateToCheck);
         }
 
-        private float TryAddFrontierNode(GoapNode<TAgentState> fromNode,
-            TAgentState newNode,
-            TAgentState destinationNode,
-            IAgentAction<TAgentState> edge)
+        private float TryAddFrontierNode(GoapNode fromNode,
+            IAgentState newNode,
+            IAgentState destinationNode,
+            IAgentAction edge)
         {
             var heuristicCost = newNode.DistanceFrom(destinationNode);
             var edgeWeight = edge == null ? 0.0f : edge.Weight;
@@ -59,8 +48,7 @@ namespace MainGame
 
             if (!_goapData.ShouldAddNode(newNode, nodeCost + heuristicCost)) return 0;
 
-            var newFrontierNode = GoapNode<TAgentState>
-                        .New(newNode, nodeCost, heuristicCost, fromNode);
+            var newFrontierNode = GoapNode.New(newNode, nodeCost, heuristicCost, fromNode);
 
             newFrontierNode.Action = edge;
             _goapData.AddAFrontierNode(newFrontierNode);
@@ -68,9 +56,9 @@ namespace MainGame
             return heuristicCost;
         }
 
-        public List<IAgentAction<TAgentState>> GetEdgesOriginatingFromNode(TAgentState node)
+        public List<IAgentAction> GetEdgesOriginatingFromNode(IAgentState node)
         {
-            var actions = new List<IAgentAction<TAgentState>>();
+            var actions = new List<IAgentAction>();
             foreach (var action in _allActions)
             {
                 if (action.ValidateAction(node))

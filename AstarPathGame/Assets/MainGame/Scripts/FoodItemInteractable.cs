@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using GoapFramework;
 namespace MainGame
 {
     public class FoodItemInteractable : MonoBehaviour, IInteractable

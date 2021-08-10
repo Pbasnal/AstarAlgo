@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MainGame
+namespace GoapFramework
 {
     public enum InteractionType
     {

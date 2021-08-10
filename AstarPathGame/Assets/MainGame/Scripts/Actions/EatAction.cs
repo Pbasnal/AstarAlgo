@@ -1,21 +1,22 @@
 ﻿using UnityEngine;
 using MainGame;
+using GoapFramework;
 
 namespace MainGame.Actions
 {
     [CreateAssetMenu(fileName = "EatAction", menuName = "GoapActions/EatAction", order = 52)]
-    public class EatAction : AnAgentAction
+    public class EatAction : AnActionWithAgentState
     {
         public LayerMask consumableLayers;
         private AgentMemory _agentMemory;
         private GoapAgent _agent;
 
-        public override void OnStart(GoapAgent goapAgent)
+        public override void OnStart(IGoapAgent goapAgent)
         {
-            Weight = 1;
+            base.OnStart(goapAgent);
 
-            _agent = goapAgent;
-            _agentMemory = goapAgent.GetComponent<AgentMemory>();
+            _agent = (GoapAgent)goapAgent;
+            _agentMemory = _agent.GetComponent<AgentMemory>();
             if (_agentMemory == null)
             {
                 var up = new UnityException("Add agent memory to use in patrol action"); ;
@@ -43,8 +44,8 @@ namespace MainGame.Actions
             Debug.Log($"Eat action called - Interacted = {interacted}");
             if (interacted)
             {
-                _agent.SetState(AgentStateKey.IsNotHungry);
-                _agent.UnSetState(AgentStateKey.TargetInRange | AgentStateKey.TargetInSight);
+                var agentState = (AgentState)_agent.GetCurrentState();
+                agentState.StateValue = ApplyEffects(agentState.StateValue);
             }
 
             return colliders.Length == 0 || interacted;

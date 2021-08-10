@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+using GoapFramework;
 namespace MainGame
 {
     public class AgentMemory : MonoBehaviour

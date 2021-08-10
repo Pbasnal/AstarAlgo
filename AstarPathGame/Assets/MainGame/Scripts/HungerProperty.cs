@@ -22,7 +22,8 @@ namespace MainGame
 
             if (currentHunger > hungerThresholdToBecomeHungry)
             {
-                _agent.UnSetState(AgentStateKey.IsNotHungry);
+                var currentState = (AgentState) _agent.GetCurrentState();
+                currentState.StateValue |= AgentStateKey.IsNotHungry;
             }
 
             if (currentHunger >= maxHunger)

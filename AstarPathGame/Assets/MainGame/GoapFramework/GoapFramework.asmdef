@@ -1,10 +1,8 @@
 {
-    "name": "MainGame",
+    "name": "GoapFramework",
     "rootNamespace": "",
     "references": [
-        "GUID:dd7af8eb24a3f48e3baac9e2b286860a",
-        "GUID:3ee98272653a44c35b7fa53587175c52",
-        "GUID:bcdc9d8e2c5534a598f0135073873587"
+        "GUID:3ee98272653a44c35b7fa53587175c52"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

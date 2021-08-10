@@ -1,5 +1,6 @@
 using UnityEngine;
 using MainGame;
+using GoapFramework;
 
 namespace MainGame.Sensors
 {

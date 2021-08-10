@@ -5,17 +5,12 @@ using UnityEngine;
 
 namespace MainGame
 {
-    public class GoapAgent : AGoapAgent<AgentState>
+    public class GoapAgent : AGoapAgent<AnAgentAction<AgentState>>
     {
-        public void SetState(AgentStateKey state)
-        {
-            currentState.Set(state);
-        }
-
-        public void UnSetState(AgentStateKey state)
-        {
-            if ((currentState.StateValue & state) == 0) return;
-            currentState.UnSet(state);
+        //* If we create an update method here, then
+        //* then the update of parent will not be called. 
+        //* Design package around that limitation
+        private void Update() {
         }
     }
 }
