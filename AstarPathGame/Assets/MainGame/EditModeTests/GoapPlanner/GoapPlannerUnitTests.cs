@@ -21,11 +21,12 @@ namespace GoapPlannerTests
             gameObject.AddComponent<GoapAgent>();
             var goapAgent = gameObject.GetComponent<GoapAgent>();
 
-            var goapData = new GoapData();
-            var planner = new GoapPlanner(goapData, actions);
-
+            goapAgent.agentActions = actions;
             var currentState = ScriptableObject.CreateInstance<AgentState>();
             currentState.Set(AgentStateKey.CanWalk);
+            goapAgent.currentState = currentState;
+
+            var planner = new GoapPlanner(goapAgent);
 
             var destinationNode = (AgentState)currentState.Clone();
             destinationNode.Set(AgentStateKey.EnemyIsDead);

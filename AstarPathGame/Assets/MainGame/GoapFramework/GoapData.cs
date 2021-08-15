@@ -6,7 +6,6 @@ namespace GoapFramework
     public class GoapData
     {
         private readonly SimpleMinHeap<GoapNode> _frontierNodes;
-
         private Dictionary<int, GoapNode> _processedNodes;
 
         public GoapData()

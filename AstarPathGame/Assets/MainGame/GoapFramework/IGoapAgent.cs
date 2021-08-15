@@ -1,16 +1,21 @@
+using System.Collections.Generic;
+
 namespace GoapFramework
 {
-    public interface IGoapAgent//<TAgentState>
-        //where TAgentState : IAgentState
+    public interface IGoapAgent
     {
         void SetState(IAgentState state);
         void UnSetState(IAgentState state);
         void OnStateChange(IAgentState state);
-        void UpdateMemory(IInteractable interactable);
-        void RemoveFromMemory(IInteractable interactable);
-        void SetTargetType(InteractionType targetType);
+        void OnActionPathUpdate(List<IAgentAction> actionPath);
         IAgentState GetCurrentState();
-        IInteractable GetTarget();
-        IInteractable Find(InteractionType interactionType);
+        IAgentAction[] GetAllActions();
+
+        IAgentGoalProvider GetGoalProvider();
+        // IInteractable GetTarget();
+        // void UpdateMemory(IInteractable interactable);
+        // void RemoveFromMemory(IInteractable interactable);
+        // void SetTargetType(InteractionType targetType);
+        // IInteractable Find(InteractionType interactionType);
     }
 }

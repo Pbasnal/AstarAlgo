@@ -5,13 +5,40 @@ namespace GoapFramework
     public class GoapPlanner
     {
         private IAgentAction[] _allActions;
-        public List<IAgentAction> computedPath;
         private GoapData _goapData;
+        private IGoapAgent _agent;
+        private IAgentState prevGoalState;
+        private List<IAgentAction> actionPath;
 
-        public GoapPlanner(GoapData goapData, IAgentAction[] allActions)
+        public GoapPlanner(IGoapAgent agent)
         {
-            _allActions = allActions;
-            _goapData = goapData;
+            _goapData = new GoapData();
+            _agent = agent;
+        }
+
+        public void EvaluateGoalAndActionPath()
+        {
+            var newGoalState = _agent.GetGoalProvider().EvaluateGoal();
+            var goalHasChanged = newGoalState == null || newGoalState.Equals(prevGoalState);
+
+            if (!goalHasChanged && actionPath != null)
+            {
+                var allActionsAreValid = true;
+                //* validate all actions 
+                for (int i = 0; i < actionPath.Count; i++)
+                {
+                    if (actionPath[i].ValidateAction(_agent.GetCurrentState())) continue;
+                    allActionsAreValid = false;
+                    break;
+                }
+                if(allActionsAreValid) return;
+            }
+
+            _allActions = _agent.GetAllActions();
+            actionPath = FindActionsTo(_agent.GetCurrentState(), newGoalState);
+            _agent.OnActionPathUpdate(actionPath);
+            
+            prevGoalState = newGoalState.Clone();
         }
 
         public List<IAgentAction> FindActionsTo(IAgentState currentState,
