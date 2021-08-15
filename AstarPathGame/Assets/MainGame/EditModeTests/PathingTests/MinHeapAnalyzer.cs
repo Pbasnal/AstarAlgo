@@ -4,10 +4,10 @@
 //using System.Threading;
 //using System.Threading.Tasks;
 //using NUnit.Framework;
-//using Pathfinding;
+//using BasnalGames.Pathfinding;
 //using UnityEngine;
 
-//namespace PathfindingTests
+//namespace BasnalGames.PathfindingTests
 //{
 //    public class MinHeapAnalyzer
 //    {

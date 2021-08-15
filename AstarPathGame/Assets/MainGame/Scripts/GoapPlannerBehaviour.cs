@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using GoapFramework;
+using BasnalGames.GoapFramework;
 using MainGame;
 using UnityEngine;
 

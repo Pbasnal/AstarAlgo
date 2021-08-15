@@ -2,7 +2,7 @@ using System.Diagnostics;
 using NUnit.Framework;
 using TestHelpers;
 
-namespace PathfindingTests
+namespace BasnalGames.PathfindingTests
 {
     public class AstarWithHeapUnitTests
     {

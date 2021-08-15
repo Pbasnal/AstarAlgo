@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using InsightsLogger;
+using BasnalGames.InsightsLogger;
 using UnityEditor;
 using UnityEngine;
 

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MainGame.Sensors;
 using UnityEngine;
-using GoapFramework;
+using BasnalGames.GoapFramework;
 namespace MainGame
 {
     [RequireComponent(typeof(GoapPlannerBehaviour))]
@@ -43,7 +43,8 @@ namespace MainGame
             {
                 agentActions[i].OnStart(this);
             }
-
+            
+            _agentGoalProvider = GetComponent<IAgentGoalProvider>();
             _planner = GetComponent<GoapPlannerBehaviour>();
             agentMemory = GetComponent<AgentMemory>();
         }

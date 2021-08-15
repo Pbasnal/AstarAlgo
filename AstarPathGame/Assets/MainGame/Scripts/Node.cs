@@ -1,4 +1,4 @@
-using Pathfinding;
+using BasnalGames.Pathfinding;
 using UnityEngine;
 
 namespace MainGame

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using GoapFramework;
+using BasnalGames.GoapFramework;
 
 namespace MainGame
 {

@@ -1,4 +1,4 @@
-﻿using Pathfinding;
+﻿using BasnalGames.Pathfinding;
 
 namespace TestHelpers
 {

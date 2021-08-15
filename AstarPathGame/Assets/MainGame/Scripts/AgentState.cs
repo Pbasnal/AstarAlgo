@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using GoapFramework;
+using BasnalGames.GoapFramework;
 
 namespace MainGame
 {

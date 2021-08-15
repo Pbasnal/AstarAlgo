@@ -2,10 +2,10 @@
 using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
-using Pathfinding;
+using BasnalGames.Pathfinding;
 using UnityEngine;
 
-namespace PathfindingTests
+namespace BasnalGames.PathfindingTests
 {
     public struct TestHeapNode : IMinHeapNode
     {

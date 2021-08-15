@@ -1,5 +1,5 @@
 using UnityEngine;
-using GoapFramework;
+using BasnalGames.GoapFramework;
 namespace MainGame
 {
     public class FoodItemInteractable : MonoBehaviour, IInteractable

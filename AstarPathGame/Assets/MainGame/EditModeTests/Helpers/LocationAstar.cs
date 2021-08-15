@@ -1,5 +1,5 @@
 ﻿using System;
-using Pathfinding;
+using BasnalGames.Pathfinding;
 
 namespace TestHelpers
 {
